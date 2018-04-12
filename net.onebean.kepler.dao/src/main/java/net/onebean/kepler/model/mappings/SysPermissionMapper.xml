@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.onebean.kepler.dao.SysPermissionDao" >
+
+     <select id="findByAdminUserId" parameterType="string" resultType="net.onebean.kepler.model.SysPermission">
+          select p.*
+            from sys_User u
+            LEFT JOIN sys_role_user sru on u.id= sru.sys_user_id
+            LEFT JOIN sys_role r on sru.sys_role_id=r.id
+            LEFT JOIN sys_permission_role spr on spr.role_id=r.id
+            LEFT JOIN sys_permission p on p.id =spr.permission_id
+            where u.id=#{userId} and r.is_lock = '0' and u.is_lock = '0'
+     </select>
+
+    <!-- 一对多查询关联  -->
+    <resultMap type="net.onebean.kepler.model.SysPermission" id="defaultResultMap">
+        <id property="id" column="id"/>
+        <result property="parent_id" column="parent_id"/>
+        <result property="name" column="name"/>
+        <result property="descritpion" column="descritpion"/>
+        <result property="url" column="url"/>
+        <result property="remark" column="remark"/>
+        <result property="sort" column="sort"/>
+        <result property="menu_type" column="menu_type"/>
+        <result property="icon" column="icon"/>
+    </resultMap>
+
+    <!-- 异步查找子节点  -->
+    <resultMap type="net.onebean.kepler.model.SysPermission" id="permissionTreeResultMapAsync">
+        <id property="id" column="id"/>
+        <result property="descritpion" column="descritpion"/>
+        <collection  property="childList" ofType="net.onebean.kepler.model.SysPermission">
+            <id column="child_id" property="id"/>
+            <result column="child_descritpion" property="descritpion"/>
+        </collection>
+    </resultMap>
+
+    <!--异步查找子节点,每次查找一级-->
+    <select id="findChildAsync" resultMap="permissionTreeResultMapAsync" parameterType="long">
+        SELECT o.id,o.descritpion,p.id as child_id,p.descritpion as child_descritpion FROM sys_permission o LEFT JOIN sys_permission p ON p.parent_id = o.id
+        <where>
+            <choose>
+                <when test="parent_id != null">
+                    o.parent_id = ${parent_id}
+                </when>
+                <otherwise>
+                    o.is_root = 1
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+
+    <!--查找所有子节点-->
+    <select id="findChildSync" resultMap="permissionResultMapSync">
+        SELECT o.* FROM sys_permission o
+        <where>
+          o.parent_id = #{parent_id}
+        </where>
+          ORDER by o.sort asc
+    </select>
+
+    <!--查找所有子节点-->
+    <select id="findChildSyncForMenu" resultMap="permissionResultMapSync">
+        SELECT o.* FROM sys_permission o
+        <where>
+            o.parent_id = #{parent_id} and o.menu_type = 'menu'
+        </where>
+        ORDER by o.sort asc
+    </select>
+
+    <!--查找所有子节点-->
+    <resultMap id="permissionResultMapSync" type="net.onebean.kepler.model.SysPermission" extends="defaultResultMap">
+        <collection property="childList" javaType="java.util.ArrayList" column="id" ofType="net.onebean.kepler.model.SysPermission" select="findChildSync"></collection>
+    </resultMap>
+
+</mapper>

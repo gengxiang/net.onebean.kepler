@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:lang="http://www.springframework.org/schema/lang"
+	xsi:schemaLocation="http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-3.0.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+		<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close"> 
+	      <!-- 基本属性 url、user、password -->
+	      <!--<property name="url" value="jdbc:mysql://192.168.1.108:3306/uery?useUnicode=true&amp;username=root&amp;password=root&amp;characterEncoding=UTF-8&amp;autoReconnect=true&amp;failOverReadOnly=false&amp;maxReconnects=10"/>-->
+	      <!--<property name="url" value="jdbc:mysql://192.168.31.165:3306/test_sso?useUnicode=true&amp;username=root&amp;password=root&amp;characterEncoding=UTF-8&amp;autoReconnect=true&amp;failOverReadOnly=false&amp;maxReconnects=10"/>-->
+	      <property name="url" value="jdbc:mysql://127.0.0.1:3306/onebean?useUnicode=true&amp;username=root&amp;password=root&amp;characterEncoding=UTF-8&amp;autoReconnect=true&amp;failOverReadOnly=false&amp;maxReconnects=10"/>
+	      <property name="username" value="root" />
+	      <property name="password" value="root" />
+
+	      <!-- 配置初始化大小、最小、最大 -->
+	      <property name="initialSize" value="1" />
+	      <property name="minIdle" value="1" /> 
+	      <property name="maxActive" value="20" />
+	
+	      <!-- 配置获取连接等待超时的时间 -->
+	      <property name="maxWait" value="60000" />
+	
+	      <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+	      <property name="timeBetweenEvictionRunsMillis" value="60000" />
+	
+	      <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+	      <property name="minEvictableIdleTimeMillis" value="300000" />
+	
+	      <property name="validationQuery" value="SELECT 'x' FROM DUAL" />
+	      <property name="testWhileIdle" value="true" />
+	      <property name="testOnBorrow" value="false" />
+	      <property name="testOnReturn" value="false" />
+	
+	      <!-- 打开PSCache，并且指定每个连接上PSCache的大小 -->
+	      <property name="poolPreparedStatements" value="true" />
+	      <property name="maxPoolPreparedStatementPerConnectionSize" value="20" />
+	
+	      <!-- 配置监控统计拦截的filters -->
+	      <property name="filters" value="stat" /> 
+	  </bean>
+
+ 	<bean id="sqlSessionFactory" class="net.onebean.core.extend.DynamicMapperSqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:META-INF/mybatis/mybatis.xml" />
+		<!-- mapper和resultmap配置路径 -->
+		<property name="mapperLocations">
+			<list>				
+				<value>classpath*:net/onebean/kepler/**/*Mapper.xml</value>
+				<value>classpath*:META-INF/mybatis/common_mapper.xml</value>
+			</list>
+		</property>
+		<property name="plugins">
+			<list>
+				<!-- 这个拦截器比较加在第一个，否则值带不到mapper.xml文件中 -->
+				<!-- SQL执行时间拦截器 -->
+				<bean class="net.onebean.core.extend.LogSQLExcutionTimeInterceptor"/>
+				<!-- 分页拦截器 -->
+				<bean class="net.onebean.core.extend.PaginationInterceptor"/>
+			</list>
+		</property>
+	</bean>
+	 
+	<!-- 自动扫描mapper的配置 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="net.onebean.kepler" />
+		<property name="markerInterface" value="net.onebean.core.extend.SqlMapper" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property> 
+	</bean>
+	
+	<!-- 事务配置 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<!-- 开启事务注解 -->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+    
+    <!-- 使用annotation定义事务 -->
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="find*" read-only="true" />
+			<tx:method name="get*" read-only="true" />
+			<tx:method name="save*" propagation="REQUIRED" />
+			<tx:method name="market*" propagation="REQUIRED" />
+			<tx:method name="add*" propagation="REQUIRED" />
+			<tx:method name="update*" propagation="REQUIRED" />
+			<tx:method name="submit*" propagation="REQUIRED" />
+			<tx:method name="remove*" propagation="REQUIRED" />
+			<tx:method name="copy*" propagation="REQUIRED" />
+			<tx:method name="delete*" propagation="REQUIRED" />
+			<tx:method name="discard*" propagation="REQUIRED" />
+			<tx:method name="retrieve*" propagation="REQUIRED" />
+			<tx:method name="query*" propagation="REQUIRED" read-only="true" />
+			<tx:method name="select*" propagation="REQUIRED" read-only="true" />
+		</tx:attributes>
+	</tx:advice>
+	
+	<!-- 事务粒度锁 切面到所有service方法 -->
+    <aop:config proxy-target-class="true">
+		<aop:pointcut expression="execution(public * net.onebean.kepler.service..*.*(..))" id="tranPointcut" />
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="tranPointcut" order="2" />
+	</aop:config>
+	
+</beans>

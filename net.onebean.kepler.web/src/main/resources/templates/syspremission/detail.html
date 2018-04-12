@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml"
+      xmlns:tree="http://www.w3.org/1999/html">
+<head th:replace="/public/head :: onLoadHead(机构管理)">
+</head>
+<body ddata-type="widgets">
+
+<div class="am-g tpl-g">
+    <!-- 模态提示组件 -->
+    <div th:include="/public/tips :: Tips"></div>
+
+    <!-- 机构树模态组件 -->
+    <div th:include="/public/tree :: treeTips"  class="am-popup" id="treeTips" tabindex="-1"></div>
+    <!-- 内容区域 -->
+    <div class="tpl-content-wrapper none-margin">
+        <div class="row-content am-cf">
+            <div class="row">
+                <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+                            <div class="row">
+                                <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+                                    <div class="widget am-cf">
+                                        <div class="widget-head am-cf">
+                                            <div class="widget-title am-fl" th:if="${add}">新增机构</div>
+                                            <div class="widget-title am-fl" th:if="${view}">查看机构</div>
+                                            <div class="widget-title am-fl" th:if="${edit}">编辑机构</div>
+                                            <div class="widget-function am-fr">
+                                                <a href="javascript:;" class="am-icon-cog"></a>
+                                            </div>
+                                        </div>
+                                        <div class="widget-body am-fr">
+
+                                            <form class="am-form tpl-form-border-form tpl-form-border-br" id="DataFrom">
+                                                <input type="hidden" name="id" id="entityId" th:value="${entity.id}">
+                                                <input type="hidden" name="is_root" th:value="${entity.is_root}">
+
+                                                <div class="am-form-group">
+                                                    <label for="parent_id" class="am-u-sm-3 am-form-label">上级菜单 <span class="tpl-form-line-small-title">Tree</span></label>
+                                                    <div class="am-u-sm-9"  th:with="pid=(${entity.parent_id} != null)?${entity.parent_id}:1">
+                                                        <input type="hidden" class="treeValue" name="parent_id" id="parent_id" th:value="${pid}">
+                                                        <tree:menu  th:attr="disabled=(${view} or ${entity.id} == 1),pid=${pid},selfId=${entity.id}"  th:unless="${add}"/>
+                                                        <tree:menu th:attr="pid=${pid}" th:if="${add}"/>
+                                                        <small th:unless="${view}">从菜单树上选择一个菜单作为父级</small>
+                                                    </div>
+                                                </div>
+
+                                                <div class="am-form-group">
+                                                    <label for="name" class="am-u-sm-3 am-form-label">权限标识 <span class="tpl-form-line-small-title">Text</span></label>
+                                                    <div class="am-u-sm-9">
+                                                        <input type="text" class="tpl-form-input" name="name" id="name" placeholder="请输入菜单权限标识" th:disabled="${view}" th:value="${entity.name}">
+                                                        <small th:unless="${view}">只限英文,及部分特殊符号</small>
+                                                    </div>
+                                                </div>
+
+                                                <div class="am-form-group">
+                                                    <label for="icon" class="am-u-sm-3 am-form-label">图标 <span class="tpl-form-line-small-title">Icon</span></label>
+                                                    <div class="am-u-sm-9">
+                                                            <input type="text" name="icon" id="icon" th:disabled="${view}" th:value="${entity.icon}"/>
+                                                        <br/>
+                                                        <small th:unless="${view}">点击选择图标</small>
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="am-form-group">
+                                                    <label for="descritpion" class="am-u-sm-3 am-form-label">菜单名称 <span class="tpl-form-line-small-title">Text</span></label>
+                                                    <div class="am-u-sm-9">
+                                                        <input type="text" class="tpl-form-input" name="descritpion" id="descritpion" placeholder="请输入菜单名称" th:disabled="${view}" th:value="${entity.descritpion}">
+                                                        <small th:unless="${view}">可包含汉字英文</small>
+                                                    </div>
+                                                </div>
+
+                                                <div class="am-form-group">
+                                                    <label for="url" class="am-u-sm-3 am-form-label">菜单链接 <span class="tpl-form-line-small-title">Text</span></label>
+                                                    <div class="am-u-sm-9">
+                                                        <input type="text" class="tpl-form-input" name="url" id="url" placeholder="请输入菜单链接" th:disabled="${view}" th:value="${entity.url}">
+                                                        <small th:unless="${view}">只限英文,及部分特殊符号</small>
+                                                    </div>
+                                                </div>
+
+                                                <div class="am-form-group">
+                                                    <label for="menu_type" class="am-u-sm-3 am-form-label">菜单类型 <span class="tpl-form-line-small-title">SelectBox</span></label>
+                                                    <div class="am-u-sm-9">
+                                                        <dic:code name="menu_type" id="menu_type" code="CDLX" th:attr="value=${entity.menu_type},disabled=${view}"/>
+                                                    </div>
+                                                </div>
+
+                                                <div class="am-form-group">
+                                                    <label for="sort" class="am-u-sm-3 am-form-label">排序字段 <span class="tpl-form-line-small-title">Number</span></label>
+                                                    <div class="am-u-sm-9">
+                                                        <input type="number" class="tpl-form-input" name="sort" id="sort" placeholder="请输入菜单排序字段" th:disabled="${view}" th:value="${entity.sort}">
+                                                        <small th:unless="${view}">只限数字</small>
+                                                    </div>
+                                                </div>
+
+                                                <div class="am-form-group">
+                                                    <label for="remark" class="am-u-sm-3 am-form-label">备注</label>
+                                                    <div class="am-u-sm-9">
+                                                        <textarea class="" rows="10" id="remark" name="remark" placeholder="请输入备注"  th:disabled="${view}" th:text="${entity.remark}"></textarea>
+                                                    </div>
+                                                </div>
+
+
+
+                                                <div class="am-form-group">
+                                                    <div class="am-u-sm-9 am-u-sm-push-3">
+                                                        <button type="submit" class="am-btn am-btn-primary tpl-btn-bg-color-success" th:unless="${view}">提交</button>
+                                                        <button type="button" class="am-btn am-btn-warning" th:onclick="'goUrl(\'/syspremission/edit/'+${entity.id}+'\')'" th:if="${view}">编辑</button>
+                                                        <button type="button" class="am-btn am-btn-danger" onClick="goUrl('/syspremission/preview/')">返回</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<css th:replace="/public/css :: onLoadCSS"></css>
+<js th:replace="/public/js :: onLoadJS"></js>
+<script th:src="@{/assets/js/syspremission/syspremission.js}" type="text/javascript"></script>
+<script th:src="@{/system_assets/js/tree/amazeui.tree.min.js}" type="text/javascript"></script>
+<script th:src="@{/system_assets/js/icon/jquery.fonticonpicker.min.js}" type="text/javascript"></script>
+<link th:href="@{/system_assets/css/icon/jquery.fonticonpicker.min.css}" rel="stylesheet" type="text/css" />
+<link th:href="@{/system_assets/css/icon/jquery.fonticonpicker.grey.min.css}" rel="stylesheet" type="text/css" />
+<link th:href="@{/system_assets/css/icon/jquery.fonticonpicker.inverted.min.css}" rel="stylesheet" type="text/css" />
+
+<script th:inline="javascript">
+    $(function () {
+        validateFrom();
+        var  theme = ($('body').attr('class')=='theme-black')?'fip-inverted':'fip-grey';
+        doGet('/system_assets/js/icon/icon.json',{},function (res) {
+            res = res.substr(1,res.length-2)
+            $('#icon').fontIconPicker({
+                theme:theme,
+                source: res.split(","),
+                emptyIcon: true,
+                emptyIconValue:'null',
+                hasSearch: true
+            });
+        })
+    })
+
+    /**
+     * 校验登录表单
+     * @returns void
+     */
+    function validateFrom(){
+        var validator = $("#DataFrom").validate({
+            ignore: "",
+            rules: {
+                menuTree:{
+                    treeRequired:true
+                },
+                name: {
+                    required:true,
+                    maxlength:50,
+                    premissionName:true
+                },
+                url:{
+                    required:true,
+                    maxlength:50,
+                    noChinese:true,
+                    remote: {/*菜单去重*/
+                        type: "post",
+                        url: "/syspremission/urlrepeat",
+                        data: {
+                            url:function () {return trim($("#url").val())},
+                            id:function () {return trim($("#entityId").val())}
+                        },
+                        dataFilter: function(res) {
+                            res = JSON.parse(res);
+                            return res.flag;
+                        }
+                    }
+                },
+                descritpion:{
+                    required:true,
+                    maxlength:50
+                },
+                sort:{
+                    required:true,
+                    number:true
+                },
+                remark:{
+                    maxlength:255
+                }
+
+            },
+            submitHandler: function(form) { //验证成功时调用
+                var param = $('#DataFrom').serializeJson();
+                var url = "/syspremission/save"
+                var completeHandler = function (data) {
+                    location.href = "/syspremission/preview/"
+                }
+                doPost(url,param,completeHandler)
+            },
+            messages: {
+                url: {
+                    remote: "不能与已存在的菜单链接重复!"
+                }
+            }
+        });
+    }
+</script>
+<!-- 机构树模态组件 -->
+<script id="treeTipsTempl" type="text/html"  th:replace="/public/tree :: treeTips"></script>
+<div class="am-popup" id="treeTips"></div>
+</body>
+</html>

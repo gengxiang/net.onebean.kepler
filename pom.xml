@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>net.onebean</groupId>
+        <artifactId>net.onebean.spring.boot</artifactId>
+        <version>1.0.0.RELEASE</version>
+    </parent>
+
+    <artifactId>net.onebean.kepler</artifactId>
+    <packaging>pom</packaging>
+    <name>kepler</name>
+    <description>开普勒</description>
+
+    <properties>
+        <kepler.version>1.0.0.RELEASE</kepler.version>
+    </properties>
+
+
+    <modules>
+        <module>net.onebean.kepler.dao</module>
+        <module>net.onebean.kepler.service</module>
+        <module>net.onebean.kepler.security</module>
+        <module>net.onebean.kepler.action</module>
+        <module>net.onebean.kepler.web</module>
+    </modules>
+
+
+</project>

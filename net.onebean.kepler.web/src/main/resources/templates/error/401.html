@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head th:replace="/public/head :: onLoadHead(401)">
+</head>
+<body ddata-type="widgets">
+
+<div class="am-g tpl-g">
+    <!-- 内容区域 -->
+    <div class="tpl-content-wrapper none-margin">   
+        <div class="row-content am-cf">
+            <div class="widget am-cf">
+                <div class="widget-body">
+                    <div class="tpl-page-state">
+                        <div class="tpl-page-state-title am-text-center tpl-error-title">401</div>
+                        <div class="tpl-error-title-info">Logon Failure</div>
+                        <div class="tpl-page-state-content tpl-error-content">
+                            <p>老铁登录已失效,欢乐时光天天有,又到时间说拜拜</p>
+                            <button type="button" class="am-btn am-btn-secondary am-radius tpl-error-btn" onclick="goUrl('/login')">点击重新登录</button></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<css th:replace="/public/css :: onLoadCSS"></css>
+<js th:replace="/public/js :: onLoadJS"></js>
+<script th:inline="javascript">
+    $(function () {
+
+    })
+</script>
+</body>
+</html>

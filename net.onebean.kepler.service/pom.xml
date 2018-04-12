@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>net.onebean</groupId>
+        <artifactId>net.onebean.kepler</artifactId>
+        <version>1.0.0.RELEASE</version>
+    </parent>
+
+    <artifactId>net.onebean.kepler.service</artifactId>
+    <name>net.onebean.kepler.service</name>
+    <url>http://maven.apache.org</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.onebean</groupId>
+            <artifactId>net.onebean.kepler.dao</artifactId>
+            <version>${kepler.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.onebean</groupId>
+            <artifactId>net.onebean.redis</artifactId>
+            <version>${onebean.version}</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>net.onebean</groupId>
+            <artifactId>net.onebean.aliyun.oss</artifactId>
+            <version>${onebean.version}</version>
+        </dependency>
+
+    </dependencies>
+</project>

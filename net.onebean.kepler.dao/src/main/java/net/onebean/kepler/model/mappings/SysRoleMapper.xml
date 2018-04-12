@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.onebean.kepler.dao.SysRoleDao" >
+
+    <select id="findRolesByUserId" parameterType="long" resultType="net.onebean.kepler.model.SysRole">
+        SELECT r.*,ru.id as ruid FROM sys_role r
+        RIGHT JOIN sys_role_user ru ON r.`id` = ru.`sys_role_id`
+        RIGHT JOIN sys_user u ON u.`id` = ru.`sys_user_id`
+          <where>
+            u.`id` = ${userId} and r.is_lock = '0';
+          </where>
+    </select>
+</mapper>

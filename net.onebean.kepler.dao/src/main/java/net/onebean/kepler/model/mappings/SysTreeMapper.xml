@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.onebean.kepler.dao.SysTreeDao" >
+
+    <!-- 一对多查询关联  -->
+    <resultMap type="net.onebean.kepler.model.SysTree" id="treeResultMap">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="parentid" column="parentid"/>
+        <collection property="childList" javaType="java.util.ArrayList" column="id" ofType="net.onebean.kepler.model.SysTree" select="findList"></collection>
+    </resultMap>
+
+
+    <!--根据父id查找子列表-->
+    <select id="findList" resultMap="treeResultMap" parameterType="int">
+        SELECT * FROM sys_tree
+        <where>
+            parentid = #{parentid}
+        </where>
+    </select>
+</mapper>

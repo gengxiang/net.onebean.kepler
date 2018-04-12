@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <parent>
+    <groupId>net.onebean</groupId>
+    <artifactId>net.onebean.kepler</artifactId>
+    <version>1.0.0.RELEASE</version>
+  </parent>
+  
+  <artifactId>net.onebean.kepler.security</artifactId>
+  <name>net.onebean.kepler.security</name>
+  <url>http://maven.apache.org</url>
+  
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+  
+  <dependencies>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
+      <version>${spring.boot.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.thymeleaf.extras</groupId>
+      <artifactId>thymeleaf-extras-springsecurity4</artifactId>
+      <version>2.1.3.RELEASE</version>
+    </dependency>
+
+    <dependency>
+      <groupId>net.onebean</groupId>
+      <artifactId>net.onebean.kepler.service</artifactId>
+      <version>${kepler.version}</version>
+    </dependency>
+
+  </dependencies>
+</project>

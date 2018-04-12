@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.onebean.kepler.dao.SysPermissionRoleDao" >
+    <select id="getRolePremissionByRoleId" parameterType="long" resultType="net.onebean.kepler.model.SysPermissionRole">
+        SELECT pr.* FROM `sys_permission_role` pr WHERE pr.`role_id` = ${roleId}
+    </select>
+
+    <delete id="deteleByRoleId" parameterType="long">
+        delete from sys_permission_role
+          <where>
+              `role_id` = ${roleId}
+          </where>
+    </delete>
+
+    <delete id="deteleByPermissionId" parameterType="long">
+        delete from sys_permission_role
+        <where>
+            `permission_id` = ${permissionId}
+        </where>
+    </delete>
+
+
+    <insert id="insertBatch" parameterType="java.util.ArrayList">
+        insert into sys_permission_role (permission_id,role_id) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.permission_id},#{item.role_id})
+        </foreach>
+    </insert>
+</mapper>
