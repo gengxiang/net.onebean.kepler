@@ -8,10 +8,7 @@ import ch.qos.logback.classic.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -54,7 +51,26 @@ public class DictionaryUtils {
      * @return
      */
     public static List<DicDictionary> getDicGroup(String code){
-        return dictionary.get(code);
+        List<DicDictionary> list = dictionary.get(code);
+        Collections.sort(list, new Comparator<DicDictionary>(){
+            /*
+             * int compare(Person p1, Person p2) 返回一个基本类型的整型，
+             * 返回负数表示：p1 小于p2，
+             * 返回0 表示：p1和p2相等，
+             * 返回正数表示：p1大于p2
+             */
+            public int compare(DicDictionary p1, DicDictionary p2) {
+                //按照DicDictionary的排序字段进行升序排列
+                if(p1.getSort() > p2.getSort()){
+                    return 1;
+                }
+                if(p1.getSort() == p2.getSort()){
+                    return 0;
+                }
+                return -1;
+            }
+        });
+        return list;
     }
 
     /**
