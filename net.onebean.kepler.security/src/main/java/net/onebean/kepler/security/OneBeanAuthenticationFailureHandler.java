@@ -4,7 +4,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -23,7 +22,7 @@ import java.io.IOException;
  * 统一权限错误抛出托管类
  */
 @Service
-public class MyAuthenticationFailureHandler implements AuthenticationFailureHandler {
+public class OneBeanAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
     protected final Log logger = LogFactory.getLog(this.getClass());
     private String defaultFailureUrl;
@@ -31,10 +30,10 @@ public class MyAuthenticationFailureHandler implements AuthenticationFailureHand
     private boolean allowSessionCreation = true;
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
-    public MyAuthenticationFailureHandler() {
+    public OneBeanAuthenticationFailureHandler() {
     }
 
-    public MyAuthenticationFailureHandler(String defaultFailureUrl) {
+    public OneBeanAuthenticationFailureHandler(String defaultFailureUrl) {
         this.setDefaultFailureUrl(defaultFailureUrl);
     }
 

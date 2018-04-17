@@ -13,34 +13,24 @@
         <result property="creat_time" column="creat_time"/>
     </resultMap>
 
-    <!-- 异步查找子节点  -->
-    <resultMap type="net.onebean.kepler.model.SysOrganization" id="orgTreeResultMapAsync">
-        <id property="id" column="id"/>
-        <result property="org_name" column="org_name"/>
-        <collection  property="childList" ofType="net.onebean.kepler.model.SysOrganization">
-            <id column="child_id" property="id"/>
-            <result column="child_org_name" property="org_name"/>
-        </collection>
-    </resultMap>
-
     <!--查找所有子节点-->
     <resultMap id="orgTreeResultMapSync" type="net.onebean.kepler.model.SysOrganization" extends="defaultResultMap">
         <collection property="childList" javaType="java.util.ArrayList" column="id" ofType="net.onebean.kepler.model.SysOrganization" select="findChildSync"></collection>
     </resultMap>
 
     <!--异步查找子节点,每次查找一级-->
-    <select id="findChildAsync" resultMap="orgTreeResultMapAsync" parameterType="long">
-        SELECT o.id,o.org_name,p.id as child_id,p.org_name as child_org_name FROM sys_organization o LEFT JOIN sys_organization p ON p.parent_id = o.id
-        <where>
-            <choose>
-                <when test="parent_id != null">
-                    o.parent_id = ${parent_id}
-                </when>
-                <otherwise>
-                    o.is_root = 1
-                </otherwise>
-            </choose>
-        </where>
+    <select id="findChildAsync" resultType="net.onebean.kepler.VO.OrgTree" parameterType="long">
+        SELECT o.id,o.org_name as title,IF( EXISTS(SELECT o1.id FROM sys_organization o1  WHERE o1.parent_id = o.id) = 1 ,"folder","item") AS TYPE FROM sys_organization o
+          <where>
+              <choose>
+                  <when test="parent_id != null">
+                      o.parent_id = ${parent_id}
+                  </when>
+                  <otherwise>
+                      o.is_root = 1
+                  </otherwise>
+              </choose>
+          </where>
     </select>
 
     <!--查找所有子节点-->
@@ -63,6 +53,10 @@
              u.`id` = ${userId};
          </where>
     </select>
+
+    <delete id="deleteSelfAndChildById" parameterType="long">
+        DELETE FROM sys_organization  WHERE FIND_IN_SET(#{id},parent_ids) OR id = #{id}
+    </delete>
 
 
 </mapper>

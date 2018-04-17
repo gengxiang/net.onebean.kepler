@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public abstract  class BaseController <M extends  BaseIncrementIdModel,S extends IBaseBiz<M>> {
+
     /**
      *
      */
@@ -127,8 +128,8 @@ public abstract  class BaseController <M extends  BaseIncrementIdModel,S extends
     }
 
 
-    @RequestMapping("list")
-    @ResponseBody
+   @RequestMapping("list")
+   @ResponseBody
    public PageResult<M> list (Sort sort, Pagination page,PageResult<M> result,@RequestParam(value = "conditionList",required = false) String conditionStr){
         initData(sort,page,conditionStr);
         result.setData(dataList);
@@ -288,9 +289,11 @@ public abstract  class BaseController <M extends  BaseIncrementIdModel,S extends
     /**
      * 将前台的查询参数通过反射获取class 反序列化成M model
      * @param conditionStr
+     * @param sort 可为null
+     * @param page 可为null
      * @return
      */
-    protected M reflectionModelFormConditionMapStr(String conditionStr){
+    protected M reflectionModelFormConditionMapStr(String conditionStr,Sort sort,Pagination page){
         try {
             ConditionMap map = new ConditionMap();
             map.parseCondition(conditionStr);
@@ -302,6 +305,14 @@ public abstract  class BaseController <M extends  BaseIncrementIdModel,S extends
                 if (StringUtils.isNotEmpty(value)){
                     jsonObject.put(field,value);
                 }
+            }
+            if(null != sort){
+                jsonObject.put("base_sort",sort.getSort());
+                jsonObject.put("base_orderBy",sort.getOrderBy());
+            }
+            if(null != page){
+                jsonObject.put("base_pageSize",page.getPageSize());
+                jsonObject.put("base_currentPage",page.getCurrentPage());
             }
             return  JSON.parseObject(jsonObject.toJSONString(),ReflectionUtils.findParameterizedType(clazz,0));
         } catch (ClassNotFoundException e) {

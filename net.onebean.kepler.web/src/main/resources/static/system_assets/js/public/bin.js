@@ -91,6 +91,10 @@ $('body').on('click', '.sidebar-menu-button', function() {
         var $nav = $tab.find('.am-tabs-nav');
         var $bd = $tab.find('.am-tabs-bd');
         var $link = $(this).data('url');
+        if($link.indexOf('http://') != -1 ||$link.indexOf('http://') != -1){
+            window.open($link);
+            return;
+        }
         var $name = $(this).data('name');
         var $onebeanTabs = $nav.children('li');
         var isRepeat = isRepeatTab($onebeanTabs,$link);
@@ -144,6 +148,13 @@ $('body').on('click', '.sidebar-nav-sub-title',function(){
     $(this).attr('status','close');
     clearMenuActive();
     $(this).addClass('active');
+})
+
+/**
+ * 刪除一行tr按钮
+ */
+$('body').on('click', '.del-line-btn',function(){
+    $(this).parents('.onebean-line-tr').remove();
 })
 
 
@@ -319,7 +330,7 @@ function closeOtherTabs(target) {
 /**
  * list页面搜索条件里的dic选择框变动后 重新加载页面
  */
-$('body').on('change', '.onebean-select-box',function(){
+$('body').on('change', '.onebean-param-select-box',function(){
     initDataTable();
 })
 
@@ -393,9 +404,10 @@ $(".reset-button").on("click",function(){
     $("#orderBySelector").children('option').eq(0).attr('selected', true);
     $("#limitSelector").trigger('changed.selected.amui');
     $("#orderBySelector").trigger('changed.selected.amui');
-    $('.onebean-select-box').selected('destroy');
-    $('.onebean-select-box').selected();
+    $('.onebean-param-select-box').selected('destroy');
+    $('.onebean-param-select-box').selected();
     $('.paramFrom').data('flush','1')
+    initDataTable()
 })
 
 
@@ -477,7 +489,7 @@ function initTreeSyncMultiSelect(title,roleId,url,$treeTemplate) {
                 .removeClass('am-icon-angle-right')
                 .addClass('am-icon-check');
         })
-    },50)
+    },200)
 }
 
 /**
@@ -824,6 +836,49 @@ function trim(str){
 }
 
 /**
+ * 是否是空字符串
+ * @param str
+ * @returns {boolean}
+ */
+function isEmptyStr(str) {
+    if ( str == "" ) return true;
+    var regu = "^[ ]+$";
+    var re = new RegExp(regu);
+    return re.test(str);
+}
+
+
+/**
+ * 序列化子列表数据成json字符串
+ */
+$.fn.serializeChildListJson = function(parent){
+    var $from  = this;
+    var $trs = $from.find('.onebean-line-tr');
+    var jsonArr = new Array();
+    var tempValue = '';
+    $trs.each(function(i,e){
+        var $obj = new Object();
+        var $iputs = $(e).find('.onebean-child-list-item');
+        $iputs.each(function(index,element){
+            var value = $(element).val();
+            var name = $(element).attr('name');
+            tempValue = '';
+            if(value != null && Object.prototype.toString.call(value) == '[object Array]'){
+                $(value).each(function(i_,e_){
+                    tempValue += e_+",";
+                })
+                tempValue = tempValue.substr(0,tempValue.length-1);
+                value = tempValue;
+            }
+            $obj[name] = value;
+        })
+        jsonArr.push($obj)
+    })
+    parent['childList']=jsonArr;
+    return JSON.stringify(parent);
+}
+
+/**
  * 序列化from成json
  * @returns {{}}
  */
@@ -844,6 +899,32 @@ $.fn.serializeJson = function() {
     });
     return json;
 }
+
+/**
+ * 序列化子from成json 一对多关系
+ * @returns {{}}
+ */
+function serializeChildFromJson(arr) {
+    var $length;
+    var $obj;
+    var json = new Array()
+    for (var Key in arr){
+        if(typeof($length) != "undefined"){
+            break;
+        }
+        $length = arr[Key].length;
+    }
+
+    for (var i=0;i<$length;i++){
+        $obj = new Object();
+        for (var key in arr){
+            $obj[key] = arr[key][i];
+        }
+        json.push($obj);
+    }
+    return json;
+}
+
 
 /**
  * 跳转地址
@@ -911,11 +992,11 @@ function foldingChildTree3th($temp,target,isHide,$parent,ppid,hideChild,cross,in
     hideChild = (hideChild == "true")?true:false;
     hideChild = (!cross && index == 0)?!hideChild:hideChild;
     if(hideChild){
-        $icon.addClass('am-icon-arrow-right');
-        $icon.removeClass('am-icon-arrow-down');
+        $icon.addClass('am-icon-folder');
+        $icon.removeClass('am-icon-folder-open');
     }else {
-        $icon.addClass('am-icon-arrow-down');
-        $icon.removeClass('am-icon-arrow-right');
+        $icon.addClass('am-icon-folder-open');
+        $icon.removeClass('am-icon-folder');
     }
     $temp.attr("isHide",isHide);
     $parent.attr("hideChild",hideChild);

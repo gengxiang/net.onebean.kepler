@@ -26,7 +26,15 @@ public interface SysPermissionService extends IBaseBiz<SysPermission> {
 	 * @param parent_id
 	 * @return
 	 */
-	List<SysPermission> findChildAsync(Long parent_id);
+//	List<SysPermission> findChildAsync(Long parent_id);
+
+	/**
+	 * 异步查找子节点,每次查找一级
+	 * @param parent_id
+	 * @param self_id
+	 * @return
+	 */
+	List<MenuTree> findChildAsync(Long parent_id,Long self_id);
 	/**
 	 * 包装方法,将机构包装成treeList
 	 * @param before
@@ -50,5 +58,11 @@ public interface SysPermissionService extends IBaseBiz<SysPermission> {
 	 * @return
 	 */
 	List<SysPermission> getCurrentLoginUserHasPermission(List<SysPermission> list, JSONArray currentPer);
+
+	/**
+	 * 根据id删除自身以及自项
+	 * @param id
+	 */
+	void deleteSelfAndChildById(Long id);
 
 }

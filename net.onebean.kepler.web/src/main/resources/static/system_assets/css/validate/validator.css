@@ -11,6 +11,7 @@
   font-weight: bold;
   padding: 0px 0 0 18px;
   color: #EA5200;
+  margin-right: 20px;
 }
 .checked {
   background:url("../../img/validator/true.png") no-repeat center center;

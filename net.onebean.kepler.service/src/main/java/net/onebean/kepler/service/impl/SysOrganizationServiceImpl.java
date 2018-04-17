@@ -45,24 +45,15 @@ public class SysOrganizationServiceImpl extends BaseBiz<SysOrganization, SysOrga
      * @return
      */
     @Override
-    public List<SysOrganization> findChildAsync(Long parent_id) {
-        List<SysOrganization> list = new ArrayList<>();
-        List<SysOrganization> tempList;
-        Condition condition;
-        if(null == parent_id){
-            condition = Condition.parseCondition("is_root@string@eq$");
-            condition.setValue("1");
-            SysOrganization root = this.find(new Pagination(),condition).get(0);
-            tempList = baseDao.findChildAsync(root.getId());
-            if (CollectionUtil.isNotEmpty(tempList)) {
-                root.setChildList(tempList);
-                root.setHasChild(true);
+    public List<OrgTree> findChildAsync(Long parent_id,Long self_id) {
+        List<OrgTree> res = new ArrayList<>();
+        List<OrgTree> list = baseDao.findChildAsync(parent_id);
+        for (OrgTree o : list) {//某些业务场景 节点不能选择自己作为父级节点,故过滤掉所有自己及以下节点
+            if (null == self_id || (null != self_id && Parse.toInt(o.getId()) != self_id) || self_id == 1) {
+                res.add(o);
             }
-            list.add(root);
-        }else{
-            list = baseDao.findChildAsync(parent_id);
         }
-        return list;
+        return res;
     }
 
 
@@ -92,12 +83,14 @@ public class SysOrganizationServiceImpl extends BaseBiz<SysOrganization, SysOrga
 
     @Override
     public void save(SysOrganization entity) {
+        super.save(entity);
         entity.setParent_ids(getParentOrgIdsNotEmpty(entity.getId()));
         super.save(entity);
     }
 
     @Override
     public void saveBatch(List<SysOrganization> entities) {
+        super.saveBatch(entities);
         for (SysOrganization entity : entities) {
             entity.setParent_ids(getParentOrgIdsNotEmpty(entity.getId()));
         }
@@ -135,5 +128,10 @@ public class SysOrganizationServiceImpl extends BaseBiz<SysOrganization, SysOrga
     @Override
     public List<SysOrganization> findByUserId(Long userId) {
         return baseDao.findByUserId(userId);
+    }
+
+    @Override
+    public void deleteSelfAndChildById(Long id) {
+        baseDao.deleteSelfAndChildById(id);
     }
 }

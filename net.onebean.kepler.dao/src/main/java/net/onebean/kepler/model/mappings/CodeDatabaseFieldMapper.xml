@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.onebean.kepler.dao.CodeDatabaseFieldDao" >
+
+    <select id="findAllTableFieldbyTableName" resultType="net.onebean.kepler.model.CodeDatabaseField">
+        SELECT COLUMN_NAME as column_name,DATA_TYPE as database_type,COLUMN_COMMENT as annotation FROM information_schema.COLUMNS
+        <where>
+            table_schema = #{databaseName} AND table_name = #{tablename};
+        </where>
+    </select>
+</mapper>

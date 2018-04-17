@@ -21,7 +21,7 @@ import java.util.List;
  * @author 0neBean
  */
 @Service
-public class MyPermissionEvaluator implements PermissionEvaluator {
+public class OneBeanPermissionEvaluator implements PermissionEvaluator {
 
     /**
      * @remark 校验权限方法

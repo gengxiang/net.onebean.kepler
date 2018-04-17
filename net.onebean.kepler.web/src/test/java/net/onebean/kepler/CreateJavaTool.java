@@ -111,10 +111,10 @@ public class CreateJavaTool {
 		proPath = proPath.replaceAll("\\\\", "\\\\\\\\");
 		workspacePath = new File(proPath).getParent()+"\\";
 		workspacePath = proPath+"\\"+projectName+"\\";
-		modelPath = workspacePath +"net.onebean.kepler.dao\\src\\main\\java\\com\\onebean\\kepler\\model\\";
+		modelPath = workspacePath +"net.onebean.kepler.dao\\src\\main\\java\\net\\onebean\\kepler\\model\\";
 		mapperPath = modelPath + "mappings\\";
-		daoPath = workspacePath + "net.onebean.kepler.dao\\src\\main\\java\\com\\onebean\\kepler\\dao\\";
-		servicePath = workspacePath + "net.onebean.kepler.service\\src\\main\\java\\com\\onebean\\kepler\\service\\";
+		daoPath = workspacePath + "net.onebean.kepler.dao\\src\\main\\java\\net\\onebean\\kepler\\dao\\";
+		servicePath = workspacePath + "net.onebean.kepler.service\\src\\main\\java\\net\\onebean\\kepler\\service\\";
 		serviceImplPath = servicePath +"impl\\";
 		daoPath_text.setText(daoPath);
 		modelPath_text.setText(modelPath);
@@ -237,7 +237,7 @@ public class CreateJavaTool {
 			fileWriter.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}  
+		}
 	}
 	
 	protected void executeServiceImpl(){

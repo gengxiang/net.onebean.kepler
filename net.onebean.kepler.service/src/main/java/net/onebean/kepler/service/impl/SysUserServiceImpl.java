@@ -5,6 +5,8 @@ import net.onebean.kepler.model.SysUser;
 import net.onebean.kepler.service.SysUserService;
 import net.onebean.kepler.dao.SysUserDao;
 
+import java.util.List;
+
 @Service
 public class SysUserServiceImpl extends BaseBiz<SysUser, SysUserDao> implements SysUserService{
 
@@ -12,4 +14,5 @@ public class SysUserServiceImpl extends BaseBiz<SysUser, SysUserDao> implements 
 		// TODO Auto-generated method stub
 		return baseDao.findByUserName(username);
 	}
+
 }

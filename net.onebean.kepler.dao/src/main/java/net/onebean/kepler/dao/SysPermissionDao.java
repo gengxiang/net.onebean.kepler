@@ -1,37 +1,47 @@
 package net.onebean.kepler.dao;
-import java.util.List;
-
 
 import net.onebean.core.BaseDao;
+import net.onebean.kepler.VO.MenuTree;
 import net.onebean.kepler.model.SysPermission;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 public interface SysPermissionDao extends BaseDao<SysPermission> {
-	
-    public List<SysPermission> findByAdminUserId(@Param("userId")String userId);
+
+    /**
+     * 根据用户查找菜单
+     * @param userId
+     * @return
+     */
+    List<SysPermission> findByUserId(@Param("userId")String userId);
 
     /**
      * 异步查找子节点,每次查找一级
      * @param parent_id
      * @return
      */
-    List<SysPermission> findChildAsync(@Param("parent_id") Long parent_id);
+    List<MenuTree> findChildAsync(@Param("parent_id") Long parent_id);
 
     /**
      * 查找所有子节点
-     * @param parentId
-     * @param forMenu 为true时将不查出 为url的 SysPermission
+     * @param parent_id
      * @return
      */
     List<SysPermission> findChildSync(@Param("parent_id") Long parent_id);
 
     /**
      * 查找所有子节点
-     * @param parentId
-     * @param forMenu 为true时将不查出 为url的 SysPermission
+     * @param parent_id
      * @return
      */
     List<SysPermission> findChildSyncForMenu(@Param("parent_id") Long parent_id);
+
+    /**
+     * 根据id删除自身以及自项
+     * @param id
+     */
+    void deleteSelfAndChildById(@Param("id")Long id);
 
 
 }

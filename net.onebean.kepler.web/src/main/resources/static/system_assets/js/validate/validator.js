@@ -55,3 +55,8 @@ $.validator.addMethod("treeRequired",function(value,element){
     return (value.indexOf("未选择") == -1)?true:false;
 },"必填字段");
 
+/*不为空字符串*/
+$.validator.addMethod("notEmpty",function(value,element){
+    return (isEmptyStr(value))?false:true;
+},"该字段不能为空值");
+

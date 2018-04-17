@@ -1,6 +1,5 @@
 package net.onebean.kepler.security;
 
-import net.onebean.core.Pagination;
 import net.onebean.kepler.model.SysPermission;
 import net.onebean.kepler.service.SysPermissionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +19,7 @@ import java.util.*;
  * 0neBean
  */
 @Service
-public class MyInvocationSecurityMetadataSourceService  implements FilterInvocationSecurityMetadataSource {
+public class OneBeanInvocationSecurityMetadataSourceService implements FilterInvocationSecurityMetadataSource {
 
     @Autowired
     private SysPermissionService sysPermissionService;

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="net.onebean.kepler.dao.SysPermissionDao" >
 
-     <select id="findByAdminUserId" parameterType="string" resultType="net.onebean.kepler.model.SysPermission">
+     <select id="findByUserId" parameterType="string" resultType="net.onebean.kepler.model.SysPermission">
           select p.*
             from sys_User u
             LEFT JOIN sys_role_user sru on u.id= sru.sys_user_id
@@ -25,19 +25,9 @@
         <result property="icon" column="icon"/>
     </resultMap>
 
-    <!-- 异步查找子节点  -->
-    <resultMap type="net.onebean.kepler.model.SysPermission" id="permissionTreeResultMapAsync">
-        <id property="id" column="id"/>
-        <result property="descritpion" column="descritpion"/>
-        <collection  property="childList" ofType="net.onebean.kepler.model.SysPermission">
-            <id column="child_id" property="id"/>
-            <result column="child_descritpion" property="descritpion"/>
-        </collection>
-    </resultMap>
-
     <!--异步查找子节点,每次查找一级-->
-    <select id="findChildAsync" resultMap="permissionTreeResultMapAsync" parameterType="long">
-        SELECT o.id,o.descritpion,p.id as child_id,p.descritpion as child_descritpion FROM sys_permission o LEFT JOIN sys_permission p ON p.parent_id = o.id
+    <select id="findChildAsync" resultType="net.onebean.kepler.VO.MenuTree" parameterType="long">
+        SELECT o.id,o.descritpion as title,IF( EXISTS(SELECT o1.id FROM sys_permission o1  WHERE o1.parent_id = o.id) = 1 ,"folder","item") AS TYPE FROM sys_permission o
         <where>
             <choose>
                 <when test="parent_id != null">
@@ -72,5 +62,10 @@
     <resultMap id="permissionResultMapSync" type="net.onebean.kepler.model.SysPermission" extends="defaultResultMap">
         <collection property="childList" javaType="java.util.ArrayList" column="id" ofType="net.onebean.kepler.model.SysPermission" select="findChildSync"></collection>
     </resultMap>
+
+
+    <delete id="deleteSelfAndChildById" parameterType="long">
+        DELETE FROM sys_permission WHERE FIND_IN_SET(#{id},parent_ids) OR id = #{id}
+    </delete>
 
 </mapper>

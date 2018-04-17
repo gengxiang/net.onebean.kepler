@@ -33,17 +33,30 @@ public class SysPremissionController extends BaseController<SysPermission,SysPer
     @Autowired
     private SysPermissionRoleService sysPermissionRoleService;
 
+    /**
+     * 查出一级节点
+     * @param page
+     * @param result
+     * @param parent_id
+     * @param self_id
+     * @return
+     */
     @RequestMapping("menutree")
     @ResponseBody
     public PageResult<MenuTree> MenuTree(Pagination page,PageResult<MenuTree> result,
                                         @RequestParam(value = "parent_id",required = false) Long parent_id,
                                         @RequestParam(value = "self_id",required = false) Long self_id){
-        List<SysPermission> list = baseService.findChildAsync(parent_id);
-        result.setData(baseService.permissionToMenuTree(list,self_id));
+        result.setData(baseService.findChildAsync(parent_id,self_id));
         result.setPagination(page);
         return result;
     }
 
+    /**
+     * 查出所有节点
+     * @param parent_id
+     * @param result
+     * @return
+     */
     @RequestMapping("allmenutree")
     @ResponseBody
     public PageResult<MenuTree> allMenuTree(@RequestParam(value = "parent_id",required = false) Long parent_id,PageResult<MenuTree> result){
@@ -53,6 +66,12 @@ public class SysPremissionController extends BaseController<SysPermission,SysPer
         return result;
     }
 
+    /**
+     * 所有有权限的菜单
+     * @param result
+     * @param request
+     * @return
+     */
     @RequestMapping("allpermissiontree")
     @ResponseBody
     public PageResult<SysPermission> allPermissionTree(PageResult<SysPermission> result,HttpServletRequest request){
@@ -64,6 +83,12 @@ public class SysPremissionController extends BaseController<SysPermission,SysPer
         return result;
     }
 
+    /**
+     * 获取对应角色的所有菜单的树
+     * @param roleId
+     * @param result
+     * @return
+     */
     @RequestMapping("getrolepremission")
     @ResponseBody
     public PageResult<MenuTree> getRolePremission(@RequestParam(value = "roleId") Long roleId,PageResult<MenuTree> result){
@@ -72,7 +97,13 @@ public class SysPremissionController extends BaseController<SysPermission,SysPer
         return result;
     }
 
-
+    /**
+     * 保存角色拥有的菜单权限
+     * @param premIds
+     * @param result
+     * @param roleId
+     * @return
+     */
     @RequestMapping("savepremissionrole")
     @ResponseBody
     public PageResult<SysPermissionRole> savePremissionRole(@RequestParam("premIds")String premIds,PageResult<SysPermissionRole> result
@@ -95,7 +126,7 @@ public class SysPremissionController extends BaseController<SysPermission,SysPer
     @Description(value = "删除")
     @ResponseBody
     public PageResult<SysPermission> delete(Model model, @PathVariable("id")Object id, PageResult<SysPermission> result) {
-        baseService.deleteById(id);
+        baseService.deleteSelfAndChildById(Parse.toLong(id));
         sysPermissionRoleService.deteleByPermissionId(Parse.toLong(id));
         result.setFlag(true);
         return result;

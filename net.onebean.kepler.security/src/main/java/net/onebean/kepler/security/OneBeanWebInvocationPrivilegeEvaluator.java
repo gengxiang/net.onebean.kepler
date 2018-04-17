@@ -19,14 +19,14 @@ import java.util.Collection;
  * @author 0neBean
  */
 @Service
-public class MyWebInvocationPrivilegeEvaluator implements WebInvocationPrivilegeEvaluator {
+public class OneBeanWebInvocationPrivilegeEvaluator implements WebInvocationPrivilegeEvaluator {
 
     protected static final Log logger = LogFactory.getLog(DefaultWebInvocationPrivilegeEvaluator.class);
 
     //权限拦截器
-    private final MyFilterSecurityInterceptor securityInterceptor;
+    private final OneBeanFilterSecurityInterceptor securityInterceptor;
     //可以指定权限拦截器的构造器
-    public MyWebInvocationPrivilegeEvaluator(MyFilterSecurityInterceptor securityInterceptor) {
+    public OneBeanWebInvocationPrivilegeEvaluator(OneBeanFilterSecurityInterceptor securityInterceptor) {
         this.securityInterceptor = securityInterceptor;
     }
 

@@ -38,7 +38,7 @@ public class SysPermissionServiceImpl extends BaseBiz<SysPermission, SysPermissi
 		if (null != user && user.getUser_type().equals("admin")){
 			return this.findAll();
 		}
-		return baseDao.findByAdminUserId(userId_str);
+		return baseDao.findByUserId(userId_str);
 	}
 
 
@@ -77,28 +77,19 @@ public class SysPermissionServiceImpl extends BaseBiz<SysPermission, SysPermissi
 
 	/**
 	 * 异步查找子节点,每次查找一级
-	 * @author 0neBean
 	 * @param parent_id
+	 * @param self_id
 	 * @return
 	 */
-	public List<SysPermission> findChildAsync(Long parent_id) {
-		List<SysPermission> list = new ArrayList<>();
-		List<SysPermission> tempList;
-		Condition condition;
-		if(null == parent_id){
-			condition = Condition.parseCondition("is_root@string@eq$");
-			condition.setValue("1");
-			SysPermission root = this.find(new Pagination(),condition).get(0);
-			tempList = baseDao.findChildAsync(root.getId());
-			if (CollectionUtil.isNotEmpty(tempList)) {
-				root.setChildList(tempList);
-				root.setHasChild(true);
+	public List<MenuTree> findChildAsync(Long parent_id,Long self_id){
+		List<MenuTree> res = new ArrayList<>();
+		List<MenuTree> list = baseDao.findChildAsync(parent_id);
+		for (MenuTree o : list) {//某些业务场景 节点不能选择自己作为父级节点,故过滤掉所有自己及以下节点
+			if (null == self_id || (null != self_id && Parse.toInt(o.getId()) != self_id) || self_id == 1) {
+				res.add(o);
 			}
-			list.add(root);
-		}else{
-			list = baseDao.findChildAsync(parent_id);
 		}
-		return list;
+		return res;
 	}
 
 
@@ -200,4 +191,8 @@ public class SysPermissionServiceImpl extends BaseBiz<SysPermission, SysPermissi
 		return result;
 	}
 
+	@Override
+	public void deleteSelfAndChildById(Long id) {
+		baseDao.deleteSelfAndChildById(id);
+	}
 }

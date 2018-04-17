@@ -22,7 +22,7 @@ import java.util.List;
  * @author 0neBean
  */
 @Service
-public class CustomUserService implements UserDetailsService { //自定义UserDetailsService 接口
+public class OneBeanCustomUserService implements UserDetailsService { //自定义UserDetailsService 接口
 
     @Autowired
     SysUserService sysUserService;

@@ -1,5 +1,6 @@
 package net.onebean.kepler.dao;
 import net.onebean.core.BaseDao;
+import net.onebean.kepler.VO.OrgTree;
 import net.onebean.kepler.model.SysOrganization;
 import org.apache.ibatis.annotations.Param;
 
@@ -12,7 +13,7 @@ public interface SysOrganizationDao extends BaseDao<SysOrganization> {
      * @param parent_id
      * @return
      */
-    List<SysOrganization> findChildAsync(@Param("parent_id") Long parent_id);
+    List<OrgTree> findChildAsync(@Param("parent_id") Long parent_id);
 
     /**
      * 查找所有子节点
@@ -34,5 +35,11 @@ public interface SysOrganizationDao extends BaseDao<SysOrganization> {
      * @return
      */
     List<SysOrganization> findByUserId(@Param("userId")Long userId);
+
+    /**
+     * 根据id删除自身以及自项
+     * @param id
+     */
+    void deleteSelfAndChildById(@Param("id")Long id);
 
 }

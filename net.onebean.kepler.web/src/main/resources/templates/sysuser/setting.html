@@ -21,24 +21,13 @@
                                             <div class="widget-title am-fl" th:if="${view}">查看用户</div>
                                             <div class="widget-title am-fl" th:if="${edit}">编辑用户</div>
                                             <div class="widget-function am-fr" th:unless="${view}">
-                                                <a href="javascript:;" class="am-icon-cog"  th:onclick="'javascript:modalRU(\''+${entity.id}+'\',\''+${entity.realname}+'\')'">  绑定角色</a>
+                                                <a href="/sysuser/setpassword" class="am-icon-cog">  设置密码</a>
                                             </div>
                                         </div>
                                         <div class="widget-body am-fr">
 
                                             <form class="am-form tpl-form-border-form tpl-form-border-br" id="DataFrom">
                                                 <input type="hidden" name="id" th:value="${entity.id}">
-
-                                                <div class="am-form-group">
-                                                    <label for="org_id" class="am-u-sm-3 am-form-label">所属机构 <span class="tpl-form-line-small-title">Tree</span></label>
-                                                    <div class="am-u-sm-9"  th:with="pid=(${entity.org_id} != null)?${entity.org_id}:1">
-                                                        <input type="hidden" class="treeValue" name="org_id" id="org_id" th:value="${pid}">
-                                                        <tree:org th:attr="disabled=${view},value=${entity.org_id},pid=${pid}"  th:unless="${add}"/>
-                                                        <tree:org th:attr="pid=${pid}" th:if="${add}"/>
-                                                        <small th:unless="${view}">从机构树上选择一个机构</small>
-                                                    </div>
-                                                </div>
-
 
                                                 <div class="am-form-group">
                                                     <label for="username" class="am-u-sm-3 am-form-label">用户名 <span class="tpl-form-line-small-title">Text</span></label>
@@ -120,35 +109,12 @@
                                                     </div>
                                                 </div>
 
-
-                                                <div class="am-form-group">
-                                                    <label for="user_type" class="am-u-sm-3 am-form-label">用户类型 <span class="tpl-form-line-small-title">SelectBox</span></label>
-                                                    <div class="am-u-sm-9">
-                                                        <dic:code name="user_type" id="user_type" code="YHLX" th:attr="value=${entity.user_type},disabled=${view}"/>
-                                                    </div>
-                                                </div>
-
-                                                <div class="am-form-group">
-                                                    <label for="is_lock" class="am-u-sm-3 am-form-label">锁定用户 <span class="tpl-form-line-small-title">Switch</span></label>
-                                                    <div class="am-u-sm-9">
-                                                        <div class="tpl-switch">
-                                                            <input type="hidden" class="hide tpl-switch-hider" value=""/>
-                                                            <input type="checkbox" class="ios-switch bigswitch tpl-switch-btn" th:checked="${entity.is_lock eq '1'}" th:disabled="${view}" name="is_lock" id="is_lock"/>
-                                                            <div class="tpl-switch-btn-view">
-                                                                <div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-
                                                 <div class="am-form-group">
                                                     <div class="am-u-sm-9 am-u-sm-push-3">
                                                         <button type="button" class="am-btn am-btn-secondary" th:onclick="'resetPassword(\'/sysuser/resetpassword/'+${entity.id}+'\')'" th:unless="${view}">重置密码</button>
                                                         <button type="submit" class="am-btn am-btn-primary tpl-btn-bg-color-success" th:unless="${view}">提交</button>
                                                         <button type="button" class="am-btn am-btn-warning" th:onclick="'goUrl(\'/sysuser/edit/'+${entity.id}+'\')'" th:if="${view}">编辑</button>
-                                                        <button type="button" class="am-btn am-btn-danger" onClick="goUrl('/sysuser/preview/')">返回</button>
+                                                        <button type="button" class="am-btn am-btn-danger" onClick="goUrl('/')">返回</button>
                                                     </div>
                                                 </div>
                                             </form>

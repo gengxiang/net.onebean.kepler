@@ -90,3 +90,42 @@ function modalOrgTree() {
     initTreeAsyncSingleSelect("请选择机构",null,"/sysorg/orgtree");
     treeTipsModal($treeTips);
 }
+
+/**
+ * 重置用户密码
+ */
+function resetPassword($link){
+    $(".confirm-modal-title").html("警告");
+    $(".confirm-modal-message").html("你，确定要重置用户密码为123456吗？");
+    $(".confirm-modal-btn-cancel").html("取消");
+    $(".confirm-modal-btn-confirm").html("确定");
+    $('#confirm-modal').modal({
+        relatedTarget: this,
+        onConfirm: function(){
+            // var $link = $(this.relatedTarget).data('url');
+            doGet($link,null,function(res){
+                if(res.flag){
+                    alert("操作提示","重置密码成功!","好的");
+                }
+            })
+        },
+        onCancel: function(){}
+    });
+}
+
+/**
+ * 上传图片成功回调
+ * @param arr
+ */
+var uploadCompleteHandler = function (arr) {
+    $('#upload-modal').modal('close');
+    if(arr.length == 1){
+        $('#icon').val(arr[0]);
+        $('#iconImg').attr("src",arr[0]);
+    }else{
+        $(".alert-modal-message").html("上传文件错误");
+        $(".alert-modal-title").html("只能上传一张图片作为头像!");
+        $(".alert-modal-button").html("额...好吧");
+        $('#alert-modal').modal('open');
+    }
+}

@@ -16,7 +16,7 @@ import java.util.Iterator;
  * 0neBean
  */
 @Service
-public class MyAccessDecisionManager implements AccessDecisionManager {
+public class OneBeanAccessDecisionManager implements AccessDecisionManager {
     @Override
     public void decide(Authentication authentication, Object object, Collection<ConfigAttribute> configAttributes) throws AccessDeniedException, InsufficientAuthenticationException {
 

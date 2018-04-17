@@ -85,8 +85,12 @@
                     <td>
                         {{if data.childList!=null}}
                             <a onclick="foldingChildTree(this)">
-                                <i class="am-icon-arrow-down"></i>
+                                <i class="am-icon-folder-open"></i>
                             </a>
+                        {{else}}
+                        <a href="javascript;">
+                            <i class="am-icon-file"></i>
+                        </a>
                         {{/if}}
                         <a href="/sysorg/view/{{data.id}}" class="tree-span-title">{{data.title}}</a>
                     </td>
@@ -129,7 +133,11 @@
                     {{#blank}}
                     {{if childList!=null}}
                         <a onclick="foldingChildTree(this)">
-                            <i class="am-icon-arrow-down"></i>
+                            <i class="am-icon-folder-open"></i>
+                        </a>
+                    {{else}}
+                        <a href="javascript;">
+                            <i class="am-icon-file"></i>
                         </a>
                     {{/if}}
                     <a href="/sysorg/view/{{id}}" class="tree-span-title">{{title}}</a>

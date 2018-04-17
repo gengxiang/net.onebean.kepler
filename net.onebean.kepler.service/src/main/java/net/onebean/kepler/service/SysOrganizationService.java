@@ -14,13 +14,13 @@ public interface SysOrganizationService extends IBaseBiz<SysOrganization> {
      */
     List<SysOrganization> findChildSync(Long parent_id);
 
-    /**
+    /**a
      * 异步查找子节点,每次查找一级
      * @author 0neBean
      * @param parent_id
      * @return
      */
-    List<SysOrganization> findChildAsync(Long parent_id);
+    List<OrgTree> findChildAsync(Long parent_id,Long self_id);
 
     /**
      * 包装方法,将机构包装成treeList
@@ -36,4 +36,10 @@ public interface SysOrganizationService extends IBaseBiz<SysOrganization> {
      * @return
      */
     List<SysOrganization> findByUserId(Long userId);
+
+    /**
+     * 根据id删除自身以及自项
+     * @param id
+     */
+    void deleteSelfAndChildById(Long id);
 }

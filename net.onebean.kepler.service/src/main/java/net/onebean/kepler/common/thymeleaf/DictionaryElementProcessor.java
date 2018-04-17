@@ -42,17 +42,29 @@ public class DictionaryElementProcessor extends AbstractMarkupSubstitutionElemen
         final String value = element.getAttributeValue("value");
         final String disabled = element.getAttributeValue("disabled");
         final String pattern = element.getAttributeValue("param-pattern");
+        final String multiple = element.getAttributeValue("multiple");
+        final String inChildList = element.getAttributeValue("inChildList");
         final Element select = new Element("select");
         select.setAttribute("data-am-selected","{btnSize: 'sm'}");
         select.setAttribute("name",name);
         select.setAttribute("id",id);
+        StringBuffer classStr = new StringBuffer();
+
+        if(StringUtils.isNotEmpty(inChildList) && inChildList.equals("true")){
+            classStr.append(" onebean-child-list-item");
+        }
         if (StringUtils.isNotEmpty(disabled) && disabled.equals("disabled")) {
             select.setAttribute("disabled",disabled);
         }
         if (StringUtils.isNotEmpty(pattern)) {
-            select.setAttribute("class","paramInput onebean-select-box");
+            classStr.append(" paramInput onebean-param-select-box");
             select.setAttribute("param-pattern",pattern);
         }
+        if (StringUtils.isNotEmpty(multiple) && multiple.equals("true")){
+            select.setAttribute("multiple","");
+        }
+
+        select.setAttribute("class",classStr.toString());
         List<DicDictionary> list = DictionaryUtils.getDicGroup(code);
         if(CollectionUtil.isNotEmpty(list)){
             if (StringUtils.isNotEmpty(pattern)) {
@@ -66,8 +78,13 @@ public class DictionaryElementProcessor extends AbstractMarkupSubstitutionElemen
 
                 final Element option = new Element("option");
                 final Text text = new Text(d.getDic());
-                if (StringUtils.isNotEmpty(value) && value.equals(d.getVal())) {
-                    option.setAttribute("selected","");
+                if (StringUtils.isNotEmpty(value)) {
+                    String [] valueArr = value.split(",");
+                    for (String s : valueArr) {
+                        if(s.equals(d.getVal())){
+                            option.setAttribute("selected","");
+                        }
+                    }
                 }
                 option.setAttribute("value",d.getVal());
                 option.addChild(text);
