@@ -11,12 +11,14 @@ import net.onebean.core.Condition;
 import net.onebean.core.Pagination;
 import net.onebean.core.form.Parse;
 import net.onebean.kepler.VO.MenuTree;
+import net.onebean.kepler.model.CodeDatabaseTable;
 import net.onebean.kepler.model.SysPermissionRole;
 import net.onebean.kepler.model.SysUser;
 import net.onebean.kepler.service.SysPermissionRoleService;
 import net.onebean.kepler.service.SysUserService;
 import net.onebean.util.CollectionUtil;
 import net.onebean.kepler.service.SysPermissionService;
+import net.onebean.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import net.onebean.core.BaseBiz;
@@ -42,12 +44,6 @@ public class SysPermissionServiceImpl extends BaseBiz<SysPermission, SysPermissi
 	}
 
 
-	/**
-	 * 查找所有子节点
-	 * @author 0neBean
-	 * @param parent_id
-	 * @return
-	 */
 	public List<SysPermission> findChildSync(Long parent_id,Boolean forMenu) {
 		Map<String,Object> param = new HashMap<>();
 		param.put("parent_id",parent_id);
@@ -75,12 +71,6 @@ public class SysPermissionServiceImpl extends BaseBiz<SysPermission, SysPermissi
 		return list;
 	}
 
-	/**
-	 * 异步查找子节点,每次查找一级
-	 * @param parent_id
-	 * @param self_id
-	 * @return
-	 */
 	public List<MenuTree> findChildAsync(Long parent_id,Long self_id){
 		List<MenuTree> res = new ArrayList<>();
 		List<MenuTree> list = baseDao.findChildAsync(parent_id);
@@ -93,12 +83,6 @@ public class SysPermissionServiceImpl extends BaseBiz<SysPermission, SysPermissi
 	}
 
 
-	/**
-	 * 包装方法,将菜单包装成treeList
-	 * @param before
-	 * @param self_id
-	 * @return
-	 */
 	public List<MenuTree> permissionToMenuTree(List<SysPermission> before, Long self_id){
 		List<MenuTree> treeList = new ArrayList<>();
 		MenuTree temp;
@@ -125,13 +109,6 @@ public class SysPermissionServiceImpl extends BaseBiz<SysPermission, SysPermissi
 		return  treeList;
 	}
 
-	/**
-	 * 包装方法,将菜单包装成treeList
-	 * @param before
-	 * @param self_id
-	 * @param roleId
-	 * @return
-	 */
 	public List<MenuTree> permissionToMenuTreeForRole(List<SysPermission> before, Long self_id,Long roleId){
 		List<MenuTree> treeList = new ArrayList<>();
 		MenuTree temp;
@@ -194,5 +171,109 @@ public class SysPermissionServiceImpl extends BaseBiz<SysPermission, SysPermissi
 	@Override
 	public void deleteSelfAndChildById(Long id) {
 		baseDao.deleteSelfAndChildById(id);
+	}
+
+	@Override
+	public Integer findChildOrderNextNum(Long parent_id) {
+		Integer res = baseDao.findChildOrderNextNum(parent_id);
+		return (null == res)?0:res;
+	}
+
+	@Override
+	public void save(SysPermission entity) {
+		super.save(entity);
+		entity.setParent_ids(getParentMenuIdsNotEmpty(entity.getId()));
+		super.save(entity);
+	}
+
+	@Override
+	public void saveBatch(List<SysPermission> entities) {
+		super.saveBatch(entities);
+		for (SysPermission entity : entities) {
+			entity.setParent_ids(getParentMenuIdsNotEmpty(entity.getId()));
+		}
+		super.saveBatch(entities);
+	}
+
+	@Override
+	public void update(SysPermission entity) {
+		entity.setParent_ids(getParentMenuIdsNotEmpty(entity.getId()));
+		super.update(entity);
+	}
+
+	@Override
+	public void updateBatch(SysPermission entity, List<Long> ids) {
+		entity.setParent_ids(getParentMenuIdsNotEmpty(entity.getId()));
+		super.updateBatch(entity, ids);
+	}
+
+	@Override
+	public void updateBatch(List<SysPermission> entities) {
+		for (SysPermission entity : entities) {
+			entity.setParent_ids(getParentMenuIdsNotEmpty(entity.getId()));
+		}
+		super.updateBatch(entities);
+	}
+
+	protected String getParentMenuIdsNotEmpty(Long id){
+		String res = baseDao.getParentMenuIds(id);
+		if (StringUtils.isEmpty(res)){
+			return  null;
+		}
+		return  res;
+	}
+
+	@Override
+	public void generatePermission(CodeDatabaseTable table) {
+		SysPermission permission = new SysPermission();
+		permission.setName(table.getPrem_name());
+		permission.setParent_id(table.getParent_menu_id());
+		permission.setIcon(table.getMenu_icon());
+		permission.setSort(findChildOrderNextNum(permission.getParent_id()));
+		permission.setMenu_type("menu");
+		permission.setDescritpion(table.getDescription());
+		permission.setUrl("/"+StringUtils.getMappingStr(table.getTable_name())+"/preview");
+		this.save(permission);
+
+		String [] premArr = {"_PREVIEW","_ADD","_VIEW","_EDIT","_SAVE","_DELETE","_LIST"};
+		for (int i = 0; i < premArr.length; i++) {
+			SysPermission temp = (SysPermission) permission.clone();
+			temp.setName(temp.getName()+premArr[i]);
+			String descritpion = "";
+            switch(premArr[i]){
+                case "_ADD":
+                    descritpion = "新增";
+                    break;
+                case "_VIEW":
+                    descritpion = "查看";
+                    break;
+                case "_EDIT":
+                    descritpion = "编辑";
+                    break;
+                case "_SAVE":
+                    descritpion = "保存";
+                    break;
+                case "_DELETE":
+                    descritpion = "删除";
+                    break;
+                case "_LIST":
+                    descritpion = "列表数据";
+                    break;
+                case "_PREVIEW":
+                    descritpion = "列表页面";
+                    break;
+                default:
+                    break;
+            }
+            temp.setDescritpion(temp.getDescritpion()+descritpion);
+			temp.setUrl("");
+			temp.setIcon("");
+			temp.setMenu_type("url");
+			temp.setSort(i);
+			temp.setId(null);
+			temp.setParent_id(permission.getId());
+			this.save(temp);
+		}
+
 	}
 }

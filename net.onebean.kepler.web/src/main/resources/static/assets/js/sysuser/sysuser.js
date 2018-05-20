@@ -1,10 +1,12 @@
 function initModalRU() {
+    var $link = '/sysrole/findbyname?name=%QUERY';
+    $link = $('title').data('ctx') + $link;
     /*猎犬 异步数据*/
     var rolenames = new Bloodhound({
         datumTokenizer: Bloodhound.tokenizers.obj.whitespace('ch_name'),
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         remote: {//在文本框输入字符时才发起请求
-            url:'/sysrole/findbyname?name=%QUERY',
+            url:$link,
             wildcard: '%QUERY'
             ,filter: function(result) {
                 return $.map(result.data, function(item) {
@@ -33,7 +35,10 @@ function initModalRU() {
     );
 }
 
-
+/*关闭弹框重置模糊搜索框*/
+$('body').on('close.modal.amui', '#data-bind-modal', function() {
+    $('#input-sg').tagsinput('destroy');
+})
 
 /*初始化RU列表*/
 function initRoleUserList() {
@@ -45,6 +50,7 @@ function initRoleUserList() {
 
 /*初始化RU列表*/
 function modalRU(uid,name){
+    initModalRU();
     $('#rolesList').data("uid",uid);
     $(".data-bind-title").html("为用户: "+name+" 绑定角色");
     initRoleUserList();
@@ -82,15 +88,6 @@ function removeRU() {
     })
 }
 
-
-/*模态机构树*/
-function modalOrgTree() {
-    var $treeTips = $('#treeTips');
-    $treeTips.html(template('treeTipsTempl',null));
-    initTreeAsyncSingleSelect("请选择机构",null,"/sysorg/orgtree");
-    treeTipsModal($treeTips);
-}
-
 /**
  * 重置用户密码
  */
@@ -118,7 +115,6 @@ function resetPassword($link){
  * @param arr
  */
 var uploadCompleteHandler = function (arr) {
-    $('#upload-modal').modal('close');
     if(arr.length == 1){
         $('#icon').val(arr[0]);
         $('#iconImg').attr("src",arr[0]);
@@ -128,4 +124,5 @@ var uploadCompleteHandler = function (arr) {
         $(".alert-modal-button").html("额...好吧");
         $('#alert-modal').modal('open');
     }
+    $('#upload-modal').modal('close');
 }

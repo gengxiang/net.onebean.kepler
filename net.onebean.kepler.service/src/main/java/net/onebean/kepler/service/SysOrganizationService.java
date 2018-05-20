@@ -42,4 +42,10 @@ public interface SysOrganizationService extends IBaseBiz<SysOrganization> {
      * @param id
      */
     void deleteSelfAndChildById(Long id);
+    /**
+     * 根据父ID查找下一个排序值
+     * @param parent_id
+     * @return
+     */
+    Integer findChildOrderNextNum(Long parent_id);
 }

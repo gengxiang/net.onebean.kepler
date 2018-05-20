@@ -1,5 +1,5 @@
 <!-- 树模板 -->
-<script id="treeTipsTempl" type="text/html" th:fragment="treeTips">
+<script id="menuTreeTipsTempl" type="text/html" th:fragment="menuTreeTips">
     <div class="am-popup-inner">
         <div class="am-popup-hd">
             <h4 class="am-popup-title">...</h4>
@@ -28,10 +28,31 @@
             </ul>
             <div class="am-form-group">
                 <div class="am-u-sm-9 am-u-sm-push-3 tree-button-group">
-                    <button type="button" class="am-btn am-btn-success tree-button" onClick="asyncSingleSelectAction()">保存</button>
+                    <button type="button" class="am-btn am-btn-success tree-button" onClick="menuTreeSelectAction({{$data.businessIputId}})">保存</button>
                 </div>
             </div>
         </div>
     </div>
 </script>
 <!-- 树模板 -->
+
+
+<script type="text/javascript" th:fragment="menuTreeTipsJs">
+
+
+    /*模态机构树*/
+    function modalmenuTree(selfId,businessIputId) {
+        var $treeTips = $('#treeTips');
+        $treeTips.html(template('menuTreeTipsTempl',{businessIputId:$(businessIputId).prop('id')}));
+        initTreeAsyncSingleSelect("请选择菜单",selfId,"/syspremission/menutree");
+        treeTipsModal($treeTips);
+    }
+
+    /*树选择事件 获取选中值*/
+    function menuTreeSelectAction(businessIputId){
+        businessIputId = $(businessIputId).prop('id');
+        $('#'+businessIputId+'').val($('#tree-template').tree("selectedItems")[0].id);
+        $('#menuTreeSelectorInput').val($('#tree-template').tree("selectedItems")[0].title);
+        $('#treeTips').modal('close');
+    }
+</script>

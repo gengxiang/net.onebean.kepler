@@ -29,8 +29,6 @@
                     <p class="page-header-description" sec:authorize="hasPermission('$everyone','PERM_SYSTEM_SETTING')">hasPermission-PERM_SYSTEM_SETTING</p>
                     <p class="page-header-description" sec:authorize="hasPermission('$everyone','PERM_USER_SETTING')">hasPermission-PERM_USER_SETTING</p>
                     <p class="page-header-description" sec:authorize="hasPermission('abel','/')">hasPermission-abel</p>
-                    <div  th:replace="/public/tree :: treeTemplate">
-                    </div>
                 </div>
                 <div class="am-u-lg-3 tpl-index-settings-button">
                     <button type="button" class="page-header-button"><span class="am-icon-paint-brush"></span> 设置
@@ -162,7 +160,7 @@
                         <div class="achievement-subheading">
                             月度最佳员工
                         </div>
-                        <img class="achievement-image" src="/system_assets/img/user07.png" alt="">
+                        <img class="achievement-image" th:src="@{/system_assets/img/user07.png}" alt="">
                         <div class="achievement-description">
                             禁言小张在
                             <strong>30天内</strong> 禁言了

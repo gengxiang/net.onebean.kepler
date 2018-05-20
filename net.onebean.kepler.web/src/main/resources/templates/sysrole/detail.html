@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" >
 <head th:replace="/public/head :: onLoadHead(用户管理)">
 </head>
 <body ddata-type="widgets">
@@ -12,17 +12,15 @@
         <div class="row-content am-cf">
             <div class="row">
                 <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
-
                             <div class="row">
-
                                 <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
                                     <div class="widget am-cf">
                                         <div class="widget-head am-cf">
-                                            <div class="widget-title am-fl" th:if="${add}">新增用户</div>
-                                            <div class="widget-title am-fl" th:if="${view}">查看用户</div>
-                                            <div class="widget-title am-fl" th:if="${edit}">编辑用户</div>
+                                            <th:block th:include="/public/breadCrumbs :: breadCrumbsTempl"/>
                                             <div class="widget-function am-fr" th:unless="${view}">
-                                                <a href="javascript:;" class="am-icon-cog"  th:onclick="'javascript:intiPrTree(\''+${entity.id}+'\')'">  绑定角色</a>
+                                                <th:block sec:authorize="hasPermission('$everyone','PERM_ROLE_BIND_PREMISSION')">
+                                                    <a href="javascript:;" class="am-icon-cog"  th:onclick="'javascript:intiPrTree(\''+${entity.id}+'\')'">  绑定角色</a>
+                                                </th:block>
                                             </div>
                                         </div>
                                         <div class="widget-body am-fr">
@@ -79,9 +77,13 @@
 
                                                 <div class="am-form-group">
                                                     <div class="am-u-sm-9 am-u-sm-push-3">
-                                                        <button type="submit" class="am-btn am-btn-primary tpl-btn-bg-color-success" th:unless="${view}">提交</button>
-                                                        <button type="button" class="am-btn am-btn-warning" th:onclick="'goUrl(\'/sysrole/edit/'+${entity.id}+'\')'" th:if="${view}">编辑</button>
-                                                        <button type="button" class="am-btn am-btn-danger" onClick="goUrl('/sysrole/preview/')">返回</button>
+                                                        <th:block sec:authorize="hasPermission('$everyone','PERM_ROLE_SAVE')">
+                                                            <button type="submit" class="am-btn am-btn-primary tpl-btn-bg-color-success" th:unless="${view}">提交</button>
+                                                        </th:block>
+                                                        <th:block sec:authorize="hasPermission('$everyone','PERM_ROLE_EDIT')">
+                                                            <button type="button" class="am-btn am-btn-warning" th:onclick="'routingPage(\'/sysrole/edit/'+${entity.id}+'\',\'编辑角色\')'" th:if="${view}">编辑</button>
+                                                        </th:block>
+                                                        <button type="button" class="am-btn am-btn-danger" onClick="routingPage('/sysrole/preview/')">返回</button>
                                                     </div>
                                                 </div>
                                             </form>
@@ -102,7 +104,7 @@
 <script  th:inline="javascript">
     $(function () {
         validateFrom();
-    })
+    });
 
     /**
      * 校验登录表单
@@ -127,9 +129,9 @@
             },
             submitHandler: function(form) { //验证成功时调用
                 var param = $('#DataFrom').serializeJson();
-                var url = "/sysrole/save"
+                var url = "/sysrole/save";
                 function completeHandler(data) {
-                    location.href = "/sysrole/preview";
+                    routingPage('/sysrole/preview','角色管理');
                 }
                 doGet(url,param,completeHandler)
             }

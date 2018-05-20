@@ -1299,6 +1299,11 @@ ul.tpl-dropdown-content .tpl-dropdown-menu-messages-item .menu-messages-content 
   line-height: 220px;
   color: #868E8E;
 }
+.theme-white .tpl-error-title {
+  font-size: 210px;
+  line-height: 220px;
+  color: #838FA1;
+}
 .theme-black .tpl-error-title-info {
   line-height: 30px;
   font-size: 21px;

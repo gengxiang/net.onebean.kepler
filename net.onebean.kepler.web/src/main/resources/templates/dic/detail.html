@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="/public/head :: onLoadHead(字典管理)">
 </head>
 <body ddata-type="widgets">
@@ -20,12 +20,7 @@
                                 <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
                                     <div class="widget am-cf">
                                         <div class="widget-head am-cf">
-                                            <div class="widget-title am-fl" th:if="${add}">新增字典项</div>
-                                            <div class="widget-title am-fl" th:if="${view}">查看字典详情</div>
-                                            <div class="widget-title am-fl" th:if="${edit}">编辑字典项</div>
-                                            <div class="widget-function am-fr">
-                                                <a href="javascript:;" class="am-icon-cog"></a>
-                                            </div>
+                                            <th:block th:include="/public/breadCrumbs :: breadCrumbsTempl"/>
                                         </div>
                                         <div class="widget-body am-fr">
 
@@ -78,9 +73,13 @@
 
                                                 <div class="am-form-group">
                                                     <div class="am-u-sm-9 am-u-sm-push-3">
-                                                        <button type="submit" class="am-btn am-btn-primary tpl-btn-bg-color-success" th:unless="${view}">提交</button>
-                                                        <button type="button" class="am-btn am-btn-warning" th:onclick="'goUrl(\'/dic/edit/'+${entity.id}+'\')'" th:if="${view}">编辑</button>
-                                                        <button type="button" class="am-btn am-btn-danger" onClick="goUrl('/dic/preview/')">返回</button>
+                                                        <th:block sec:authorize="hasPermission('$everyone','PERM_DIC_SAVE')">
+                                                            <button type="submit" class="am-btn am-btn-primary tpl-btn-bg-color-success" th:unless="${view}">提交</button>
+                                                        </th:block>
+                                                        <th:block sec:authorize="hasPermission('$everyone','PERM_DIC_EDIT')">
+                                                            <button type="button" class="am-btn am-btn-warning" th:onclick="'routingPage(\'/dic/edit/'+${entity.id}+'\',\'编辑字典\')'" th:if="${view}">编辑</button>
+                                                        </th:block>
+                                                        <button type="button" class="am-btn am-btn-danger" onClick="routingPage('/dic/preview/')">返回</button>
                                                     </div>
                                                 </div>
                                             </form>
@@ -129,6 +128,7 @@
                 },
                 sort:{
                     required:true,
+                    positiveNumber:true,
                     maxlength: 5
                 }
             },
@@ -136,7 +136,7 @@
                 var url = "/dic/save"
                 var param = $('#DataFrom').serializeJson();
                 function completeHandler(data) {
-                    location.href = "/dic/preview";
+                    routingPage('/dic/preview','字典管理');
                 }
                 doGet(url,param,completeHandler)
             }

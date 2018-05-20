@@ -2,6 +2,7 @@ package net.onebean.kepler.security;
 
 import net.onebean.kepler.model.SysPermission;
 import net.onebean.kepler.service.SysPermissionService;
+import net.onebean.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
@@ -51,6 +52,10 @@ public class OneBeanInvocationSecurityMetadataSourceService implements FilterInv
         String resUrl;
         for(Iterator<String> iter = map.keySet().iterator(); iter.hasNext(); ) {
             resUrl = iter.next();
+            if (StringUtils.isEmpty(resUrl)){
+                //如果url为空 不加载该url资源
+                return null;
+            }
             matcher = new AntPathRequestMatcher(resUrl);
             if(matcher.matches(request)) {
                 return map.get(resUrl);

@@ -1,12 +1,14 @@
 package net.onebean.kepler.model;
+
 import net.onebean.core.extend.FiledName;
 import net.onebean.core.extend.IgnoreColumn;
 import net.onebean.core.extend.TableName;
 import net.onebean.core.model.BaseModel;
+
 import java.util.List;
 
 @TableName("sys_permission")
-public class SysPermission extends BaseModel{
+public class SysPermission extends BaseModel implements Cloneable {
 
 	private String name;
 	@FiledName("name")
@@ -113,4 +115,25 @@ public class SysPermission extends BaseModel{
 	public void setIcon(String icon) {
 		this.icon = icon;
 	}
+
+	private String parent_ids;
+	@FiledName("parent_ids")
+	public String getParent_ids() {
+		return parent_ids;
+	}
+
+	public void setParent_ids(String parent_ids) {
+		this.parent_ids = parent_ids;
+	}
+
+    @Override
+    public Object clone() {
+        SysPermission sysPermission = null;
+        try{
+            sysPermission = (SysPermission)super.clone();
+        }catch(CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return sysPermission;
+    }
 }

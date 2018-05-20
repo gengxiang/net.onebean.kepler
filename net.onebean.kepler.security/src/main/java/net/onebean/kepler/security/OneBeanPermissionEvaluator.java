@@ -1,9 +1,5 @@
 package net.onebean.kepler.security;
 
-import net.onebean.core.form.Parse;
-import net.onebean.kepler.model.SysRole;
-import net.onebean.kepler.service.SysRoleService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -12,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.List;
 
 
 /**

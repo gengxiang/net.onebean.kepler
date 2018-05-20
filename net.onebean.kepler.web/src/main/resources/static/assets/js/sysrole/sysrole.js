@@ -4,12 +4,12 @@ function prTreeSubmitAction() {
     var roleId = $('#PrTree-tips').data("roleId");
     $.each($('#PrTree-template').tree("selectedItems"),function (i,e) {
         ids+=e.id+",";
-    })
+    });
     ids = ids.substr(0,ids.length-1)
     doPost("/syspremission/savepremissionrole",{premIds:ids,roleId:roleId},function(res){
         if(res.flag){
             $('#PrTree-tips').modal('close');
-            alert("操作提示","数据更新成功!","好的");
+            alert("数据更新成功!");
         }
     })
 }
@@ -17,19 +17,19 @@ function prTreeSubmitAction() {
 /*监听树初始化完成事件 展开所有节点*/
 $('body').on('loaded.tree.amui', '#PrTree-template', function() {
     $('#PrTree-template').tree('discloseAll')
-})
+});
 
 /*关闭弹框销毁树*/
 $('body').on('close.modal.amui', '#PrTree-tips', function() {
     $('#PrTree-template').tree('destroy')
     $('#PrTree-tips').empty();
-})
+});
 
 /*关闭弹框销毁树*/
 $('body').on('close.modal.amui', '#treeTips', function() {
     $('#tree-template').tree('destroy')
     $('#treeTips').empty();
-})
+});
 
 /*权限角色绑定树初始化 点击触发事件*/
 function intiPrTree(roleId) {

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="/public/head :: onLoadHead(401)">
 </head>
 <body ddata-type="widgets">
@@ -14,8 +14,8 @@
                         <div class="tpl-page-state-title am-text-center tpl-error-title">401</div>
                         <div class="tpl-error-title-info">Logon Failure</div>
                         <div class="tpl-page-state-content tpl-error-content">
-                            <p>老铁登录已失效,欢乐时光天天有,又到时间说拜拜</p>
-                            <button type="button" class="am-btn am-btn-secondary am-radius tpl-error-btn" onclick="goUrl('/login')">点击重新登录</button></div>
+                            <p>老铁登录已失效,请输入正确的账号密码重新登录</p>
+                            <button type="button" class="am-btn am-btn-secondary am-radius tpl-error-btn" th:onclick="'javascript:goUrl(\''+${ctx}+'/login\')'">点击重新登录</button></div>
                     </div>
                 </div>
             </div>

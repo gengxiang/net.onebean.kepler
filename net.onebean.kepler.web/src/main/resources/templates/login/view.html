@@ -5,6 +5,8 @@
 <body data-type="login">
 	<div th:replace="/public/js :: onLoadJS"></div>
 	<div th:replace="/public/css :: onLoadCSS"></div>
+	<!-- 模态提示组件 -->
+	<div th:include="/public/tips :: Tips"></div>
 	<div class="am-g tpl-g">
 		<p th:if="${null != errorMsg}" th:text="${errorMsg}" class="am-text-sm" style="color: #b5b5b5">用户名或密码错误，请重试</p> <!-- 2 -->
 

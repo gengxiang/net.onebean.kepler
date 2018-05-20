@@ -5,6 +5,7 @@ import net.onebean.core.extend.FiledName;
 import net.onebean.core.extend.IgnoreColumn;
 import net.onebean.core.extend.TableName;
 import net.onebean.core.model.BaseModel;
+import net.onebean.util.StringUtils;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -84,5 +85,57 @@ public class CodeDatabaseTable extends BaseModel{
 
 	public void setChildList(List<CodeDatabaseField> childList) {
 		this.childList = childList;
+	}
+
+
+	private Long parent_menu_id;
+	private String menu_icon;
+	private String prem_name;
+	@FiledName("parent_menu_id")
+	public Long getParent_menu_id() {
+		return parent_menu_id;
+	}
+
+	public void setParent_menu_id(Long parent_menu_id) {
+		this.parent_menu_id = parent_menu_id;
+	}
+	@FiledName("menu_icon")
+	public String getMenu_icon() {
+		return menu_icon;
+	}
+
+	public void setMenu_icon(String menu_icon) {
+		this.menu_icon = menu_icon;
+	}
+
+	@FiledName("prem_name")
+	public String getPrem_name() {
+		return prem_name;
+	}
+
+	public void setPrem_name(String prem_name) {
+		this.prem_name = prem_name;
+	}
+
+	private String mapping;
+
+	@IgnoreColumn
+	public String getMapping() {
+		return mapping;
+	}
+
+	public void setMapping(String mapping) {
+		this.mapping = mapping;
+	}
+
+	private String table_name_generate;
+
+	@IgnoreColumn
+	public String getTable_name_generate() {
+		return table_name_generate;
+	}
+
+	public void setTable_name_generate(String table_name_generate) {
+		this.table_name_generate = table_name_generate;
 	}
 }

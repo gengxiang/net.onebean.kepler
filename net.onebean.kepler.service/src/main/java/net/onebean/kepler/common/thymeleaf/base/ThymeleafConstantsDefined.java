@@ -1,4 +1,4 @@
-package net.onebean.kepler.common.thymeleaf;
+package net.onebean.kepler.common.thymeleaf.base;
 
 import net.onebean.util.PropUtil;
 import org.springframework.stereotype.Component;
@@ -21,6 +21,7 @@ public class ThymeleafConstantsDefined {
         if(viewResolver != null) {
             Map<String, Object> vars = new HashMap<>();
             vars.put("oss_ctx", PropUtil.getConfig("aliyun.oss.host"));
+            vars.put("ctx", PropUtil.getConfig("server.context-path"));
             viewResolver.setStaticVariables(vars);
         }
     }

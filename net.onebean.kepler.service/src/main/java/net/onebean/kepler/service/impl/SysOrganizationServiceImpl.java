@@ -134,4 +134,10 @@ public class SysOrganizationServiceImpl extends BaseBiz<SysOrganization, SysOrga
     public void deleteSelfAndChildById(Long id) {
         baseDao.deleteSelfAndChildById(id);
     }
+
+    @Override
+    public Integer findChildOrderNextNum(Long parent_id) {
+        Integer res = baseDao.findChildOrderNextNum(parent_id);
+        return (null == res)?0:res;
+    }
 }

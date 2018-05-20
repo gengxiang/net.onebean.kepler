@@ -10,15 +10,15 @@ public interface SysOrganizationDao extends BaseDao<SysOrganization> {
 
     /**
      * 异步查找子节点,每次查找一级
-     * @param parent_id
+     * @param parent_id 父级id
      * @return
      */
     List<OrgTree> findChildAsync(@Param("parent_id") Long parent_id);
 
     /**
      * 查找所有子节点
-     * @param parent_id
-     * @return
+     * @param parent_id 父级id
+     * @return List<SysOrganization>
      */
     List<SysOrganization> findChildSync(@Param("parent_id") Long parent_id);
 
@@ -41,5 +41,10 @@ public interface SysOrganizationDao extends BaseDao<SysOrganization> {
      * @param id
      */
     void deleteSelfAndChildById(@Param("id")Long id);
-
+    /**
+     * 根据父ID查找下一个排序值
+     * @param parent_id
+     * @return
+     */
+    Integer findChildOrderNextNum(Long parent_id);
 }

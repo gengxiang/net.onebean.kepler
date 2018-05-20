@@ -15,7 +15,7 @@
                 <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
                     <div class="widget am-cf">
                         <div class="widget-head am-cf">
-                            <div class="widget-title  am-cf">数据模型列表</div>
+                            <th:block th:include="/public/breadCrumbs :: breadCrumbsTempl"/>
                         </div>
                         <div class="widget-body am-fr">
                             <form class="am-form tpl-form-border-form tpl-form-border-br" id="DataFrom">
@@ -33,11 +33,10 @@
                                     </div>
                                 </div>
 
-
                                 <div class="am-form-group">
                                     <div class="am-u-sm-9 am-u-sm-push-3">
-                                        <button type="submit" class="am-btn am-btn-primary tpl-btn-bg-color-success" >下一步</button>
-                                        <button type="button" class="am-btn am-btn-danger" onClick="goUrl('/databasetable/preview/')">返回</button>
+                                        <button type="submit" class="am-btn am-btn-primary tpl-btn-bg-color-success" >  下一步</button>
+                                        <button type="button" class="am-btn am-btn-danger" onClick="routingPage('/databasetable/preview/','数据库模型')">返回</button>
                                     </div>
                                 </div>
                             </form>
@@ -59,7 +58,7 @@
 <script type="text/javascript" >
     $(function () {
         initDataTable()
-    })
+    });
 
     function initDataTable(){
         $("#DataFrom").validate({
@@ -71,17 +70,15 @@
             },
             submitHandler: function(form) { //验证成功时调用
                 var param = $('#DataFrom').serializeJson();
-                var url = "/databasetable/isrepeattable/"
+                var url = "/databasetable/isrepeattable/";
                 var completeHandler = function (data) {
                     if(data.flag){
-                        window.location.href = "/databasetable/add/"+param.table_name
+                        routingPage("/databasetable/add/"+param.table_name,'添加数据库模型');
                     }else{
-                        alert("警告",data.msg,"好吧,换张表再试试")
+                        alert(data.msg);
                     }
-                }
-                doPost(url,param,completeHandler)
-
-
+                };
+                doPost(url,param,completeHandler);
             }
         });
     }

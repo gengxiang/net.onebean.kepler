@@ -1,6 +1,8 @@
 $(function(){
     new TapLocker();//初始化单例的菜单锁
     $('#indexMenuBtn').addClass('active');
+    initDataPicker();
+    unComments('tpl-pagination');//去除分页注释
 })
 
 // 设置jQuery Ajax全局的参数
@@ -19,6 +21,7 @@ $.ajaxSetup({
                 break;
             case(403):
                 errorCheckOnOffLine(true,jqXHR,"403");
+                break;
             case(404):
                 errorCheckOnOffLine(false,jqXHR,"404");
                 break;
@@ -30,6 +33,9 @@ $.ajaxSetup({
                 break;
             case(501):
                 errorCheckOnOffLine(false,jqXHR,"501");
+                break;
+            case(200):
+                errorCheckOnOffLine(false,jqXHR,"200");
                 break;
             default:
                 error();
@@ -45,6 +51,14 @@ $.ajaxSetup({
  * @param code
  */
 function errorCheckOnOffLine(mode,jqXHR,code) {
+    if (jqXHR.status == 200 && jqXHR.responseText.indexOf("登录页面")){
+        $('#alert-modal').on('closed.modal.amui', function(){
+            $(this).off("closed.modal.amui");
+            parent.location.reload();
+        });
+        alert("登录已失效,请重新登陆!");
+        return;
+    }
     if(mode){
         window.location.href = "/error/"+code;
         return;
@@ -63,6 +77,10 @@ function goBack() {
     window.history.back(-1);
 }
 
+/**
+ * 清除上传文件的input
+ * @param target
+ */
 function clearUploadImg(target){
     var $group = $(target).parents('.am-form-group');
     var $img = $group.find('img');
@@ -72,30 +90,44 @@ function clearUploadImg(target){
 
 }
 
+/**
+ * 标签页跳转标签页
+ * @param target
+ */
+function tabToTab(target) {
+    var $menu = $(window.parent.document.body).find('#hideMenu');
+    $menu.attr("data-name",$(target).attr("data-name"));
+    $menu.attr("data-url",$(target).attr("data-url"));
+    $menu.click();
+}
+
 
 /**
- * 新开标签页
+ * 新开标签
  */
-$('body').on('click', '.sidebar-menu-button', function() {
+var openNewTab = function (target) {
     var locker = new TapLocker();
     locker.setIsLock(true);//锁起来
     clearMenuActive();
-    var $parentsMenu = $(this).parents('.parent-menu').children('.sidebar-nav-sub-title');//父级菜单
+    var $parentsMenu = $(target).parents('.parent-menu').children('.sidebar-nav-sub-title');//父级菜单
     if($parentsMenu.length > 0){
         $parentsMenu.addClass('active')
     }else{
-        $(this).addClass('active');
+        $(target).addClass('active');
     };
     if(locker.getIsLock()){
-        var $tab = $('#onebean-frame-container');
+        var $tab = $(window.parent.document.body).find('#onebean-frame-container');
         var $nav = $tab.find('.am-tabs-nav');
         var $bd = $tab.find('.am-tabs-bd');
-        var $link = $(this).data('url');
+        var $link = $(target).data('url');
         if($link.indexOf('http://') != -1 ||$link.indexOf('http://') != -1){
             window.open($link);
             return;
+        }else{
+            var $ctx = $('title').data('ctx');
+            $link = $ctx + $link;
         }
-        var $name = $(this).data('name');
+        var $name = $(target).data('name');
         var $onebeanTabs = $nav.children('li');
         var isRepeat = isRepeatTab($onebeanTabs,$link);
         // isRepeat = -1;
@@ -106,7 +138,11 @@ $('body').on('click', '.sidebar-menu-button', function() {
             };
             tab.name = $name;
             tab.url = $link;
-            $nav.append(template('tpl-jtab', tab));
+            $nav.append(template('tpl-onebean-tab', tab));
+            /*面包屑*/
+            var breadCrumbs = eachBreadCrumbs($link,$name,true);
+            var operator = ($link.indexOf("?") != -1)?'&':'?';
+            $link += operator+"breadCrumbsStr="+encodeURI(JSON.stringify(breadCrumbs));
             var $iframe= $("<iframe width='100%' src='"+$link+"' class='am-tab-panel onebean-frame' onload='reHeightonebeanFrame(this)'></iframe>");
             $bd.append($iframe);
             $tab.tabs('refresh');
@@ -119,7 +155,7 @@ $('body').on('click', '.sidebar-menu-button', function() {
         }
     }
     locker.setIsLock(false);//解锁
-})
+}
 
 /**
  * 清除菜单中所有选中状态
@@ -185,7 +221,7 @@ function isRepeatTab($onebeanTabs,href) {
     var result = -1;
     $.each($onebeanTabs,function (i,e) {
         result = ($(e).children('a').data('url') == href)?i:result;
-    })
+    });
     return result;
 }
 
@@ -331,22 +367,24 @@ function closeOtherTabs(target) {
  * list页面搜索条件里的dic选择框变动后 重新加载页面
  */
 $('body').on('change', '.onebean-param-select-box',function(){
+    resetPageNumber();
     initDataTable();
 })
 
-/**
- * 按钮 通用绑定 点击事件
- * button[type=button]
- */
-$('body').on('click', '.action-button', function() {
-    location.href = $(this).data('url');
-})
+// /**
+//  * 按钮 通用绑定 点击事件
+//  * button[type=button]
+//  */
+// $('body').on('click', '.action-button', function() {
+//     routingPage($(this));
+// })
 
 /**
  * 查询按钮 点击事件
  * button[type=query]
  */
 $('body').on('click', '.query-button', function() {
+    resetPageNumber();
     initDataTable();
 })
 
@@ -363,7 +401,7 @@ $('body').on('click', '.pagination-number', function() {
  * 分页 返回首页 点击事件
  */
 $('body').on('click', '.pagination-frist', function() {
-    $("#tpl-pagination").attr("currentPage",1)
+    resetPageNumber();
     initDataTable();
 })
 
@@ -422,7 +460,12 @@ $(".paramFrom").keydown(function(e){
     }
 });
 
-
+/**
+ * 重置页码
+ */
+function resetPageNumber() {
+    $("#tpl-pagination").attr("currentPage",1)
+}
 
 
 /**
@@ -431,10 +474,9 @@ $(".paramFrom").keydown(function(e){
  * @param self_id
  * @param url
  */
-function
-initTreeAsyncSingleSelect(title,self_id,url) {
+function initTreeAsyncSingleSelect(title,self_id,url) {
     $('.am-popup-title').html(title);
-        $('#tree-template').tree({
+    $('#tree-template').tree({
         dataSource: function(options, callback) {
             if(options.type == "folder" || typeof(options.type) == "undefined"){
                 if(typeof(options.childList) == "object"){
@@ -450,7 +492,7 @@ initTreeAsyncSingleSelect(title,self_id,url) {
         multiSelect: false,
         cacheItems: true,
         folderSelect: true
-    })
+    });
     setTimeout(function(){
         $('#tree-template').tree('selectItem', $('.am-tree-selected'))
     },50)
@@ -477,29 +519,47 @@ function initTreeSyncMultiSelect(title,roleId,url,$treeTemplate) {
 
             }
         },
-        multiSelect: true,
         cacheItems: true,
-        folderSelect: true
-    })
+        multiSelect: true,
+        folderSelect: true,
+        itemSelect: true,
+        itemSelectedIcon:'file',
+        folderIcon:'folder',
+        folderOpenIcon:'folder-open',
+        itemIcon:'file'
+    });
     setTimeout(function(){
-        $treeTemplate.tree('selectItem', $('.selected-item'))
-        $.each($treeTemplate.find('.selected-item'),function (i,e) {
-            $(e).children('.am-tree-item-name')
-                .children('.am-icon-angle-right')
-                .removeClass('am-icon-angle-right')
-                .addClass('am-icon-check');
+        $treeTemplate.tree('selectItemSafe', $('.selected-item'));
+    },200);
+
+    $treeTemplate.on('updated.tree.amui', function (event, data) {
+        var childs = $(data.item).find('.am-tree-item,.am-tree-branch');
+        var parents = $(data.item).parents('.am-tree-branch');
+
+        //遍历父节点
+        $.each(parents, function(index,item) {
+            if(data.eventType === "selected"){
+                if(!$(item).is('.am-tree-selected')){
+                    $treeTemplate.tree('selectItemSafe', $(item));
+                }
+            }
+        });
+
+        //遍历子节点
+        $.each(childs, function(index,item) {
+            if(data.eventType === "selected"){
+                if (!$(item).is('.am-tree-selected')){
+                    $treeTemplate.tree('selectItemSafe', $(item));
+                }
+            }else if (data.eventType === "deselected"){
+                if ($(item).is('.am-tree-selected')){
+                    $treeTemplate.tree('selectItemSafe', $(item));
+                }
+            }
         })
-    },200)
+    });
 }
 
-/**
- *  异步单选树选择事件 获取选中值
- */
-function asyncSingleSelectAction(){
-    $('.treeValue').val($('#tree-template').tree("selectedItems")[0].id);
-    $('.treeSelector').val($('#tree-template').tree("selectedItems")[0].title);
-    $('#treeTips').modal('close');
-}
 
 /**
  * 机构树模态方法
@@ -549,13 +609,28 @@ $('body').on('click', '.list-del-button', function() {
 });
 
 /**
+ * 添加面包屑到url
+ * @param url
+ * @returns {string|*}
+ */
+function addbreadCrumbsToUrl(url) {
+    var breadCrumbs = justEachBreadCrumbs(false);
+    var operator = (url.indexOf("?") != -1)?'&':'?';
+    url += operator+"breadCrumbsStr="+encodeURI(JSON.stringify(breadCrumbs));
+    return url;
+}
+
+/**
  * Http post 请求
  * @param url 请求地址
  * @param param 请求参数
  * @param completeHandler 回调函数
  */
 function doPost(url,param,completeHandler) {
+    var $ctx = $('title').data('ctx');
+    url = $ctx + url;
     $.AMUI.progress.start();
+    try{url=addbreadCrumbsToUrl(url)}catch(err){}//若没有面包屑 不做处理
     $.ajax({
         url:url,
         type:"POST",//请求方式
@@ -598,7 +673,10 @@ function doPostSync(url,param,completeHandler) {
  * @param completeHandler 回调函数
  */
 function doGet(url,param,completeHandler) {
+    var $ctx = $('title').data('ctx');
+    url = $ctx + url;
     $.AMUI.progress.start();
+    try{url=addbreadCrumbsToUrl(url)}catch(err){}//若没有面包屑 不做处理
     $.ajax({
         url:url,
         type:"GET",//请求方式
@@ -642,6 +720,16 @@ function alert(title,message,buttonTitle){
 }
 
 /**
+ * 统一的弹框提示
+ */
+function alert(message){
+    $(".alert-modal-message").html(message);
+    $(".alert-modal-title").html("提示");
+    $(".alert-modal-button").html("好哒");
+    $('#alert-modal').modal('open');
+}
+
+/**
  * 统一的错误提示
  */
 function error() {
@@ -671,8 +759,10 @@ function uploadFile(completeHandler,target) {
 function initUploadModal(completeHandler) {
     var $uploadTips = $('#upload-modal');
     $uploadTips.html(template('tpl-uploadTips',null));
+    var $link = '/upload/uploadmultipartfile';
+    $link = $('title').data('ctx') + $link;
     var upload=$('#uploadFileWidget').AmazeuiUpload({
-        url : '/upload/uploadmultipartfile',
+        url : $link,
         downloadUrl :'/upload/downfile',
         maxFiles: 5, // 单次上传的数量
         maxFileSize: 10, // 单个文件允许的大小 (M)
@@ -682,13 +772,17 @@ function initUploadModal(completeHandler) {
         pasteType: false //是否允许粘贴
     });
     upload.init(); //对象初始化
+
     /*监听弹框关闭事件*/
     $('body').on('close.modal.amui', '#upload-modal', function() {
         upload.destory();
     })
+    /*上传文件控件确认按钮事件*/
     $('body').on("click",'.upload-file-submit',function(){
         var arr=upload.selectResult();
-        completeHandler(arr)
+        if(arr.length > 0){
+            completeHandler(arr)
+        }
     });
 }
 
@@ -708,7 +802,7 @@ function formatQueryFromParam() {
         if ($tepm.val() != "") {
 
             if (conditionStr.length > 0) {
-                conditionStr += "-"
+                conditionStr += "^"
             }
             conditionStr += $tepm.attr("param-pattern") + $tepm.val()
         }
@@ -925,6 +1019,64 @@ function serializeChildFromJson(arr) {
     return json;
 }
 
+/**
+ * 路由页面
+ * @param target
+ */
+function routingPage($url,$title) {
+    var $ctx = $('title').data('ctx');
+    $url = $ctx + $url;
+    var breadCrumbs = eachBreadCrumbs($url,$title,false);
+    var operator = ($url.indexOf("?") != -1)?'&':'?';
+    $url += operator+"breadCrumbsStr="+encodeURI(JSON.stringify(breadCrumbs));
+    window.location.href = $url;
+}
+
+/**
+ * 面包屑按钮点击事件
+ */
+$('body').on('click','.onebean-bread-crumbs-group a',function () {
+    var $url = $(this).data('url');
+    var $title = $(this).html();
+    var breadCrumbs = eachBreadCrumbs($url,$title,false)
+    var operator = ($url.indexOf("?") != -1)?'&':'?';
+    $url += operator+"breadCrumbsStr="+encodeURI(JSON.stringify(breadCrumbs));
+    window.location.href = $url;
+})
+
+/**
+ * 遍历面包屑生成json 数组
+ * @returns {Array}
+ */
+function eachBreadCrumbs($url,$title,$isStartPage) {
+    var $temp;
+    var breadCrumbs = justEachBreadCrumbs($isStartPage)
+    $temp = {};
+    $temp.breadCrumbsUrl = $url;
+    $temp.breadCrumbsTitle = $title;
+    breadCrumbs.push($temp)
+    return breadCrumbs;
+}
+
+/**
+ * 遍历面包屑生成json 数组
+ * @returns {Array}
+ */
+function justEachBreadCrumbs($isStartPage) {
+    var $temp;
+    var breadCrumbs = new Array();
+    if(!$isStartPage){
+        var $breadCrumbs = $('.onebean-bread-crumbs-group').find('a');
+        $.each($breadCrumbs,function (i,e) {
+            $temp = {};
+            $temp.breadCrumbsUrl = $(e).data('url');
+            $temp.breadCrumbsTitle = $(e).html();
+            breadCrumbs.push($temp)
+        })
+    }
+    return breadCrumbs;
+}
+
 
 /**
  * 跳转地址
@@ -934,13 +1086,6 @@ function goUrl(url) {
     window.location.href = url;
 }
 
-/**
- * 跳转详情页
- * @param url
- */
-function goDetail(target) {
-    window.location.href = $(target).data('url');
-}
 
 /**
  * 折叠树 递归函数入口
@@ -1001,4 +1146,52 @@ function foldingChildTree3th($temp,target,isHide,$parent,ppid,hideChild,cross,in
     $temp.attr("isHide",isHide);
     $parent.attr("hideChild",hideChild);
     foldingChildTree2ed($temp.find('a'),ppid)
+}
+
+/**
+ * 获取当前时间字符串 YYYY-MM-DD HH MM
+ * @returns {string}
+ */
+function getTodayDataStr() {
+    var myDate = new Date();
+    var year = myDate.getFullYear();
+    var month = myDate.getMonth() + 1 < 10 ? "0" + (myDate.getMonth() + 1): myDate.getMonth() + 1;
+    var day = myDate.getDate() < 10 ? "0" + myDate.getDate() : myDate.getDate();
+    myDate.getFullYear()+'-'+month
+    var dateStr = year + "-" + month + "-" + day+' 00:00:00';
+    return dateStr
+}
+
+/**
+ * 初始化时间选择控件
+ */
+function initDataPicker() {
+    $('.onebean-data-picker-data').datetimepicker({
+        language:  'zh-CN',
+        format: 'yyyy-mm-dd hh:ii:00',
+        autoclose: true,
+        todayBtn: true,
+        startDate: getTodayDataStr()
+    });
+    $('.onebean-data-picker-time').datetimepicker({
+        language:  'zh-CN',
+        format: 'yyyy-mm-dd hh:ii:00',
+        autoclose: true,
+        startView:1,
+        minView:0,
+        maxView:1
+    });
+}
+
+/**
+ * 反注释HTML代码块
+ * @param domIDName
+ */
+function unComments(domIDName) {
+    try {
+        var content = document.getElementById(domIDName);
+        content.innerHTML = content.innerHTML.replace('<!--', '').replace('-->', '');
+    }catch (e) {
+        //do nothing
+    }
 }

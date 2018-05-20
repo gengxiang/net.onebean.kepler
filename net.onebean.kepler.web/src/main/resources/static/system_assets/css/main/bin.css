@@ -151,4 +151,19 @@
     background: #eee;
     cursor: pointer;
 }
+/*alert top*/
+.onebean-confirm-tips{
+    z-index: 1301!important;
+}
+.onebean-alert-tips{
+    z-index: 1301!important;
+}
 
+.onebean-bread-crumbs-group{
+    margin: 0;
+    padding: 0;
+    float: left;
+}
+.hidden{
+    display: none;
+}

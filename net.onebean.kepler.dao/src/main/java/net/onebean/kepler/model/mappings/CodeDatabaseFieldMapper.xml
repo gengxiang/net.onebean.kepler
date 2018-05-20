@@ -3,7 +3,7 @@
 <mapper namespace="net.onebean.kepler.dao.CodeDatabaseFieldDao" >
 
     <select id="findAllTableFieldbyTableName" resultType="net.onebean.kepler.model.CodeDatabaseField">
-        SELECT COLUMN_NAME as column_name,DATA_TYPE as database_type,COLUMN_COMMENT as annotation FROM information_schema.COLUMNS
+        SELECT COLUMN_NAME as column_name,DATA_TYPE as database_type,COLUMN_COMMENT as annotation,'0' as is_query_param FROM information_schema.COLUMNS
         <where>
             table_schema = #{databaseName} AND table_name = #{tablename};
         </where>

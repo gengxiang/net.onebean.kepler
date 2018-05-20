@@ -488,6 +488,7 @@
   }
   AmazeuiUpload.prototype.destory = function() {
       this.context.html('');
+      this.fileCallback = new Array();
       var _this = this;
       _this.amazeuiUploadDelegateEvent.fileMap = new Object();
       _this.amazeuiUploadDelegateEvent.pasteFileMap = new Object();

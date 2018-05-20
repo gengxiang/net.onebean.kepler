@@ -6,6 +6,9 @@ import net.onebean.core.model.BaseModel;
 @TableName("sys_role_user")
 public class SysRoleUser extends BaseModel{
 
+	public SysRoleUser() {
+	}
+
 	public SysRoleUser(Long sys_user_id, Long sys_role_id) {
 		this.sys_user_id = sys_user_id;
 		this.sys_role_id = sys_role_id;

@@ -13,7 +13,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.security.MessageDigest;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,7 +23,6 @@ import java.util.regex.Pattern;
  */
 public class SpringSecurityUtil {
 
-    private static final String SALT = "tamboo";
 
     /**
      * 获取当前登录用户

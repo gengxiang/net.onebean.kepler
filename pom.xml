@@ -7,7 +7,7 @@
     <parent>
         <groupId>net.onebean</groupId>
         <artifactId>net.onebean.spring.boot</artifactId>
-        <version>1.1.0.2.RELEASE</version>
+        <version>1.1.0.3.RELEASE</version>
     </parent>
 
     <artifactId>net.onebean.kepler</artifactId>
@@ -16,7 +16,7 @@
     <description>开普勒</description>
 
     <properties>
-        <kepler.version>1.1.0.2.RELEASE</kepler.version>
+        <kepler.version>1.1.0.3.RELEASE</kepler.version>
     </properties>
 
 

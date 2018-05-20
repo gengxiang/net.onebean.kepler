@@ -14,7 +14,7 @@ import javax.servlet.http.HttpSession;
 @Controller
 public class LoginController {
 
-	private static String ERROR_SESSION_MSG_KEY = "SPRING_SECURITY_LAST_EXCEPTION";
+	public static String ERROR_SESSION_MSG_KEY = "SPRING_SECURITY_LAST_EXCEPTION";
 
 		@RequestMapping("/login")
 		public String view(HttpServletRequest request,Model model) {

@@ -2,20 +2,24 @@ package net.onebean.kepler;
 
 import com.aliyun.oss.ClientException;
 import com.aliyun.oss.OSSException;
-import net.onebean.util.PropUtil;
 import net.onebean.component.aliyun.AliyunOssUtil;
+import net.onebean.component.aliyun.prop.PropUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.TreeMap;
 
 
 public class OSSUploadResourcesTool {
 	/*路径参数系*/
-	private static String projectPath = PropUtil.getConfig("aliyun.oss.projectPath");
-	private static String sourcePath = PropUtil.getConfig("aliyun.oss.sourcePath");
+
+	private static PropUtils propUtils = PropUtils.getInstance();
+	private static String projectPath = propUtils.getConfing("aliyun.oss.projectPath");
+	private static String sourcePath = propUtils.getConfing("aliyun.oss.sourcePath");
 	/*oss参数系*/
-	private static String bucketName = PropUtil.getConfig("aliyun.oss.bucketName");
+	private static String bucketName = propUtils.getConfing("aliyun.oss.bucketName");
 
 
 	public static TreeMap<File, LinkedList<File>> dirFiles = new TreeMap<File, LinkedList<File>>();

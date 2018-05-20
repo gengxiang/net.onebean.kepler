@@ -3,9 +3,9 @@ package net.onebean.kepler.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
@@ -16,7 +16,7 @@ import org.springframework.security.web.access.intercept.FilterSecurityIntercept
  * web安全配置器,boot版本基本配置
  * @author 0neBean
  */
-@EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled=true)
 @Configuration
 public class OneBeanWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -39,7 +39,7 @@ public class OneBeanWebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    public void configure(WebSecurity web) throws Exception {
+    public void configure(WebSecurity web) {
         DefaultWebSecurityExpressionHandler handler = new DefaultWebSecurityExpressionHandler();
         handler.setPermissionEvaluator(permissionEvaluator);
         web.expressionHandler(handler);
@@ -47,9 +47,9 @@ public class OneBeanWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        myAuthenticationFailureHandler.setDefaultFailureUrl("/login");
+        myAuthenticationFailureHandler.setDefaultFailureUrl("/error/401");
 
-        String[] unSecuredUrls = { "/system_assets/**", "/assets/**"};
+        String[] unSecuredUrls = { "/system_assets/**", "/assets/**","/druid/**","/error/**"};
         http.authorizeRequests()
                 .antMatchers(unSecuredUrls).permitAll()
                 .anyRequest().authenticated() //任何请求,登录后可以访问
@@ -65,11 +65,6 @@ public class OneBeanWebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout().permitAll(); //注销行为任意访问
         http.addFilterBefore(myFilterSecurityInterceptor, FilterSecurityInterceptor.class).csrf().disable();
     }
-
-
-
-
-
 
 }
 

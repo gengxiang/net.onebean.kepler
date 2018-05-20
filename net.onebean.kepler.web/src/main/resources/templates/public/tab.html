@@ -1,5 +1,5 @@
 <!--标签头模板-->
-<script id="tpl-jtab" type="text/html"  th:fragment="oenbean-tabTemplate">
+<script id="tpl-onebean-tab" type="text/html"  th:fragment="oenbean-tabTemplate">
     <li>
         <span class="am-icon-close"></span>
         <a href="javascript: void(0)" data-url="{{url}}" data-name="{{name}}">{{name}}</a>
@@ -51,7 +51,16 @@
         </div>
 
         <div class="am-tabs-bd onebean-nav-pages">
-            <iframe width="100%" class='am-tab-panel onebean-frame' onload='reHeightonebeanFrame(this)' src="/index"></iframe>
+                <!--<div class="row-content onebean-bread-crumbs-dou">-->
+                    <!--<div class="widget-head am-cf onebean-bread-crumbs-group">-->
+                        <!--<ol class="none-margin-none-padding am-breadcrumb am-breadcrumb-slash">-->
+                            <!--<li><a href="#" class="am-icon-home">首页</a></li>-->
+                            <!--<li><a href="#">分类</a></li>-->
+                            <!--<li class="am-active">内容</li>-->
+                        <!--</ol>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <iframe width="100%" class='am-tab-panel onebean-frame' onload='reHeightonebeanFrame(this)' th:src="${ctx}+'/index'"></iframe>
         </div>
     </div>
 </div>

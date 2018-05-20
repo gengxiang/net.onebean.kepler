@@ -1,6 +1,6 @@
     <!DOCTYPE html>
     <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" >
-    <head th:replace="/public/head :: onLoadHead(首页)">
+    <head th:replace="/public/head :: onLoadHead(角色管理)">
 
     </head>
     <body data-type="widgets">
@@ -15,7 +15,7 @@
                 <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
                     <div class="widget am-cf">
                         <div class="widget-head am-cf">
-                            <div class="widget-title  am-cf">角色列表</div>
+                            <th:block th:include="/public/breadCrumbs :: breadCrumbsTempl"/>
                         </div>
                         <div class="widget-body am-fr">
                                 <form class="am-form tpl-form-border-form tpl-form-border-br paramFrom" data-flush="1">
@@ -60,7 +60,9 @@
                                         <div class="am-form-group" style="float: right">
                                             <div class="am-btn-toolbar">
                                                 <div class="am-btn-group am-btn-group-xs">
-                                                    <button type="button" class="am-btn am-btn-default am-btn-success action-button" data-url="/sysrole/add"><span class="am-icon-plus"></span> 新增</button>
+                                                    <th:block sec:authorize="hasPermission('$everyone','PERM_ROLE_ADD')">
+                                                        <button type="button" class="am-btn am-btn-default am-btn-success" onclick="routingPage('/sysrole/add','新增角色')"><span class="am-icon-plus"></span> 新增</button>
+                                                    </th:block>
                                                     <button type="button" class="am-btn am-btn-default am-btn-secondary query-button"><span class="am-icon-search"></span> 查询</button>
                                                     <button type="button"  class="am-btn am-btn-default am-btn-warning reset-button"><span class="am-icon-archive"></span> 重置</button>
                                                 </div>
@@ -76,7 +78,6 @@
                                        id="example-r">
                                     <thead>
                                     <tr>
-                                        <th>ID</th>
                                         <th>角色标识</th>
                                         <th>角色名</th>
                                         <th>是否禁用角色</th>
@@ -105,25 +106,24 @@
     </div>
     <css th:replace="/public/css :: onLoadCSS"></css>
     <js th:replace="/public/js :: onLoadJS"></js>
-    <script th:src="@{/system_assets/js/tree/amazeui.tree.min.js}" type="text/javascript"></script>
     <script th:src="@{/assets/js/sysrole/sysrole.js}" type="text/javascript"></script>
     <script  th:inline="javascript">
     $(function () {
         initDataTable()
-    })
+    });
 
     function initDataTable(){
         if($('.paramFrom').data('flush') == '1'){
-            $('.paramFrom').data('flush','0')
-            var pageSize = $("#limitSelector").val()
+            $('.paramFrom').data('flush','0');
+            var pageSize = $("#limitSelector").val();
             var currentPage = $("#tpl-pagination").attr("currentPage");
             var orderBy = $("#orderBySelector").val().split('-')[0];
             var sort = $("#orderBySelector").val().split('-')[1];
-            var param = {orderBy: orderBy, sort: sort, currentPage: currentPage, pageSize: pageSize, conditionList: formatQueryFromParam()}
+            var param = {orderBy: orderBy, sort: sort, currentPage: currentPage, pageSize: pageSize, conditionList: formatQueryFromParam()};
             doGet("/sysrole/list", param, function (res) {
                 $('#dataTable').html(template('tpl-sysrole', res.data));
-                $('#pagination').html(template('tpl-pagination', res.pagination))
-                $('.paramFrom').data('flush','1')
+                $('#pagination').html(template('tpl-pagination', res.pagination));
+                $('.paramFrom').data('flush','1');
             })
         }
     }
@@ -131,24 +131,31 @@
 </script>
 <script id="tpl-sysrole" type="text/html">
     {{each $data as data}}
-        <tr  {{if $index%2==0}} class="gradeX" {{else}} class="even gradeC" {{/if}} >
-            <td>{{data.id}}</td>
-            <td> <a href="/sysrole/view/{{data.id}}">{{data.name}}</a> </td>
+        <tr  class={{if $index%2==0}} "gradeX" {{else}} "even gradeC" {{/if}} >
+            <td> <a href="javascript:;" onclick="routingPage('/sysrole/view/{{data.id}}','查看角色')">{{data.name}}</a> </td>
             <td>{{data.ch_name}}</td>
             <td>{{data.is_lock}}</td>
             <td>{{data.data_permission_level}}</td>
             <td>{{data.creat_time_str}}</td>
             <td>
                 <div class="tpl-table-black-operation">
-                    <a href="/sysrole/edit/{{data.id}}">
-                        <i class="am-icon-pencil"></i> 编辑
-                    </a>
-                    <a href="javascript:;" data-url="/sysrole/delete/{{data.id}}" class="tpl-table-black-operation-del list-del-button">
-                        <i class="am-icon-trash" ></i> 删除
-                    </a>
-                    <a href="javascript:;" class="tpl-table-black-operation-warn" onclick="intiPrTree({{data.id}})">
-                        <i class="am-icon-leaf" ></i> 分配权限
-                    </a>
+                    <th:block sec:authorize="hasPermission('$everyone','PERM_ROLE_EDIT')">
+                        <a href="javascript:;" onclick="routingPage('/sysrole/edit/{{data.id}}','编辑角色')">
+                            <i class="am-icon-pencil"></i> 编辑
+                        </a>
+                    </th:block>
+
+                    <th:block sec:authorize="hasPermission('$everyone','PERM_ROLE_DELETE')">
+                        <a href="javascript:;" data-url="/sysrole/delete/{{data.id}}" class="tpl-table-black-operation-del list-del-button">
+                            <i class="am-icon-trash" ></i> 删除
+                        </a>
+                    </th:block>
+
+                    <th:block sec:authorize="hasPermission('$everyone','PERM_ROLE_BIND_PREMISSION')">
+                        <a href="javascript:;" class="tpl-table-black-operation-warn" onclick="intiPrTree({{data.id}})">
+                            <i class="am-icon-leaf" ></i> 分配权限
+                        </a>
+                    </th:block>
                 </div>
             </td>
         </tr>

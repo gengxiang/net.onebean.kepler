@@ -58,14 +58,26 @@
         ORDER by o.sort asc
     </select>
 
+
+    <select id="getParentMenuIds" parameterType="long" resultType="string">
+        SELECT getParentMenuIds(${childId});
+    </select>
+
     <!--查找所有子节点-->
     <resultMap id="permissionResultMapSync" type="net.onebean.kepler.model.SysPermission" extends="defaultResultMap">
         <collection property="childList" javaType="java.util.ArrayList" column="id" ofType="net.onebean.kepler.model.SysPermission" select="findChildSync"></collection>
     </resultMap>
 
-
+    <!--根据ID删除所有子节点-->
     <delete id="deleteSelfAndChildById" parameterType="long">
         DELETE FROM sys_permission WHERE FIND_IN_SET(#{id},parent_ids) OR id = #{id}
     </delete>
+
+    <select id="findChildOrderNextNum" parameterType="long" resultType="int">
+        SELECT p.sort + 1 FROM `sys_permission` p
+        <where>
+            p.parent_id = #{parent_id} ORDER BY p.sort DESC LIMIT 1;
+        </where>
+    </select>
 
 </mapper>

@@ -43,5 +43,19 @@ public interface SysPermissionDao extends BaseDao<SysPermission> {
      */
     void deleteSelfAndChildById(@Param("id")Long id);
 
+    /**
+     * 根据父ID查找下一个排序值
+     * @param parent_id
+     * @return
+     */
+    Integer findChildOrderNextNum(@Param("parent_id") Long parent_id);
+
+    /**
+     * 获取所有父级ID
+     * @param childId
+     * @return
+     */
+    String getParentMenuIds(@Param("childId")Long childId);
+
 
 }

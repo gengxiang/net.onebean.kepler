@@ -44,98 +44,94 @@ public abstract  class BaseController <M extends  BaseIncrementIdModel,S extends
         this.baseService = baseService;
     }
 
-    /**
-     * 预览列表页面
-     * @param model
-     * @return
-     */
-    @RequestMapping(value = "preview")
-    @Description(value = "预览列表页面")
-    public String preview(Model model) {
-        return getView("list");
-    }
-
-
-    /**
-     * 新增页面
-     * @param model
-     * @return
-     */
-    @RequestMapping(value = "add")
-    @Description(value = "新增页面")
-    public String add(Model model,M entity) {
-        model.addAttribute("add",true);
-        model.addAttribute("entity",entity);
-        return getView("detail");
-    }
-
-    /**
-     * 查看页面
-     * @param model
-     * @return
-     */
-    @RequestMapping(value = "view/{id}")
-    @Description(value = "查看页面")
-    public String view(Model model,@PathVariable("id")Object id){
-        model.addAttribute("entity",baseService.findById(id));
-        model.addAttribute("view",true);
-        return getView("detail");
-    }
-
-    /**
-     * 编辑页面
-     * @param model
-     * @return
-     */
-    @RequestMapping(value = "edit/{id}")
-    @Description(value = "编辑页面")
-    public String edit(Model model,@PathVariable("id")Object id) {
-        model.addAttribute("entity",baseService.findById(id));
-        model.addAttribute("edit",true);
-        return getView("detail");
-    }
-
-    /**
-     * 保存
-     * @param model
-     * @return
-     */
-    @RequestMapping(value = "save")
-    @Description(value = "保存")
-    @ResponseBody
-    public PageResult<M> save(Model model, M entity, PageResult<M> result) {
-        if (entity.getId() != null) {
-            baseService.update(entity);
-        } else {
-            baseService.save(entity);
-        }
-        result.getData().add(entity);
-        return result;
-    }
-
-    /**
-     * 删除
-     * @param model
-     * @return
-     */
-    @RequestMapping(value = "delete/{id}")
-    @Description(value = "删除")
-    @ResponseBody
-    public PageResult<M> delete(Model model,@PathVariable("id")Object id,PageResult<M> result) {
-         baseService.deleteById(id);
-        result.setFlag(true);
-        return result;
-    }
-
-
-   @RequestMapping("list")
-   @ResponseBody
-   public PageResult<M> list (Sort sort, Pagination page,PageResult<M> result,@RequestParam(value = "conditionList",required = false) String conditionStr){
-        initData(sort,page,conditionStr);
-        result.setData(dataList);
-        result.setPagination(page);
-        return result;
-    }
+//    /**
+//     * 预览列表页面
+//     * @param model
+//     * @return
+//     */
+//    @RequestMapping(value = "preview")
+//    @Description(value = "预览列表页面")
+//    public String preview(Model model) {
+//        return getView("list");
+//    }
+//
+//
+//    /**
+//     * 新增页面
+//     * @param model
+//     * @return
+//     */
+//    @RequestMapping(value = "add")
+//    @Description(value = "新增页面")
+//    public String add(Model model,M entity) {
+//        model.addAttribute("add",true);
+//        model.addAttribute("entity",entity);
+//        return getView("detail");
+//    }
+//
+//    /**
+//     * 查看页面
+//     * @param model
+//     * @return
+//     */
+//    @RequestMapping(value = "view/{id}")
+//    @Description(value = "查看页面")
+//    public String view(Model model,@PathVariable("id")Object id){
+//        model.addAttribute("entity",baseService.findById(id));
+//        model.addAttribute("view",true);
+//        return getView("detail");
+//    }
+//
+//    /**
+//     * 编辑页面
+//     * @param model
+//     * @return
+//     */
+//    @RequestMapping(value = "edit/{id}")
+//    @Description(value = "编辑页面")
+//    public String edit(Model model,@PathVariable("id")Object id) {
+//        model.addAttribute("entity",baseService.findById(id));
+//        model.addAttribute("edit",true);
+//        return getView("detail");
+//    }
+//
+//    /**
+//     * 保存
+//     * @param model
+//     * @return
+//     */
+//    @RequestMapping(value = "save")
+//    @Description(value = "保存")
+//    @ResponseBody
+//    public PageResult<M> save(Model model, M entity, PageResult<M> result) {
+//        baseService.save(entity);
+//        result.getData().add(entity);
+//        return result;
+//    }
+//
+//    /**
+//     * 删除
+//     * @param model
+//     * @return
+//     */
+//    @RequestMapping(value = "delete/{id}")
+//    @Description(value = "删除")
+//    @ResponseBody
+//    public PageResult<M> delete(Model model,@PathVariable("id")Object id,PageResult<M> result) {
+//         baseService.deleteById(id);
+//        result.setFlag(true);
+//        return result;
+//    }
+//
+//
+//   @RequestMapping("list")
+//   @ResponseBody
+//   public PageResult<M> list (Sort sort, Pagination page,PageResult<M> result,@RequestParam(value = "conditionList",required = false) String conditionStr){
+//        initData(sort,page,conditionStr);
+//        result.setData(dataList);
+//        result.setPagination(page);
+//        return result;
+//    }
 
 
     /**
@@ -175,8 +171,9 @@ public abstract  class BaseController <M extends  BaseIncrementIdModel,S extends
 
     /**
      * 给数据list包装字典
+     * @param dataListParam
      * @param args
-     * @see SF$is_lock 参数前半段为字典的code后半段是字段名用$隔开
+     * @see 'SF$is_lock' 参数前半段为字典的code后半段是字段名用$隔开
      */
     protected void dicCoverList(List<M> dataListParam,String...args){
         try {
@@ -188,20 +185,20 @@ public abstract  class BaseController <M extends  BaseIncrementIdModel,S extends
                 JSONObject temp = (JSONObject)o;
                 for (String s : args) {
                     String type = s.substring(0,s.indexOf("@"));
-                    String filed = s.substring(s.indexOf("@")+1,s.indexOf("$"));
-                    String code = s.substring(s.indexOf("$")+1,s.length());
+                    String code = s.substring(s.indexOf("@")+1,s.indexOf("$"));
+                    String filed = s.substring(s.indexOf("$")+1,s.length());
                     switch(type)
                     {
                         case "date":
-                            if (net.onebean.util.StringUtils.isNotEmpty(code)) {
-                                temp.put(filed+"_str", DateUtils.format(temp.getDate(filed),code));
+                            if (net.onebean.util.StringUtils.isNotEmpty(filed)) {
+                                temp.put(code+"_str", DateUtils.format(temp.getDate(code),filed));
                             } else {
-                                temp.put(filed+"_str", DateUtils.format(temp.getDate(filed),DateUtils.PATTERN_YYYY_MM_DD_HH_MM_SS));
+                                temp.put(code+"_str", DateUtils.format(temp.getDate(code),DateUtils.PATTERN_YYYY_MM_DD_HH_MM_SS));
                             }
                             break;
                         case "dic":
 
-                            temp.put(code, DictionaryUtils.dic(filed,temp.getString(code)));
+                            temp.put(filed, DictionaryUtils.dic(code,temp.getString(filed)));
                             break;
                         default:
                             break;

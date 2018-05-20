@@ -1,9 +1,12 @@
 package net.onebean.kepler.web.action.demo;
 
 
+import net.onebean.util.DateUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.sql.Timestamp;
 
 @RequestMapping("demo")
 @Controller
@@ -48,5 +51,23 @@ public class DemoController {
     public String upload(Model model){
         return "/demo/upload";
     }
+
+    @RequestMapping("tree")
+    public String tree(Model model){
+        model.addAttribute("org_id",1);
+        model.addAttribute("parent_id",1);
+        model.addAttribute("id",1);
+        model.addAttribute("sys_user_id",1);
+        return "/demo/tree";
+    }
+
+    @RequestMapping("datapicker")
+    public String datapicker(Model model){
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        model.addAttribute("startDate",DateUtils.getDateStrByTimestamp(timestamp));
+        model.addAttribute("endDate",DateUtils.getDateStrByTimestampNextDay(timestamp));
+        return "/demo/datapicker";
+    }
+
 
 }

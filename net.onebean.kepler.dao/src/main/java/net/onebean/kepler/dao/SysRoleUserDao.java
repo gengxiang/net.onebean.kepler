@@ -8,7 +8,8 @@ public interface SysRoleUserDao extends BaseDao<SysRoleUser> {
      * 根据用户id删除关联数据
      * @param userId
      */
-    void deleteByUserId(@Param("userId")Long userId);    /**
+    void deleteByUserId(@Param("userId")Long userId);
+    /**
      * 根据角色id删除关联数据
      * @param roleId
      */

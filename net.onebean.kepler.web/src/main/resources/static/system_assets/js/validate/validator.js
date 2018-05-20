@@ -21,7 +21,7 @@ $(function(){
 		  max: jQuery.validator.format("请输入一个最大为{0} 的值"),
 		  min: jQuery.validator.format("请输入一个最小为{0} 的值")
 		});
-})
+});
 
 /**
  * 自定义手机号验证
@@ -34,17 +34,19 @@ jQuery.validator.addMethod("isMobile", function(value, element) {
 
 /*权限标识正则*/
 $.validator.addMethod("premissionName",function(value,element){
+    value = trim(value);
     var patrn = new RegExp("^PERM_.*?[a-zA-Z0-9]$");
     return patrn.test(value);
 },"权限标识必须以 'PERM_' 开头,并以数字或英文结尾!");
 
 /*角色标识正则*/
 $.validator.addMethod("roleName",function(value,element){
+    value = trim(value);
     var patrn = new RegExp("^ROLE_.*?[a-zA-Z0-9]$");
     return patrn.test(value);
 },"角色标识必须以 'ROLE_' 开头,并以数字或英文结尾!");
 
-/*角色标识正则*/
+/*不包含中文*/
 $.validator.addMethod("noChinese",function(value,element){
     var patrn = new RegExp('[\u4e00-\u9fa5]');
     return (!patrn.test(value));
@@ -52,7 +54,10 @@ $.validator.addMethod("noChinese",function(value,element){
 
 /*树设为必填项*/
 $.validator.addMethod("treeRequired",function(value,element){
-    return (value.indexOf("未选择") == -1)?true:false;
+	var b1 = value.indexOf("未选择") == -1;
+	var b2 = value !='';
+	var b3 = typeof(value) != 'undefined';
+    return (b1 && b2 && b3)?true:false;
 },"必填字段");
 
 /*不为空字符串*/
@@ -60,3 +65,9 @@ $.validator.addMethod("notEmpty",function(value,element){
     return (isEmptyStr(value))?false:true;
 },"该字段不能为空值");
 
+/*正数*/
+$.validator.addMethod("positiveNumber",function(value,element){
+    var patrn = new RegExp('^[0-9]*$');
+    var number = patrn.test(value);
+    return (number && value >= 0)?true:false;
+},"该字段不能为负数");

@@ -85,4 +85,56 @@ public class CodeDatabaseField extends BaseModel{
 	public void setCreate_time(Timestamp create_time){
 		 this.create_time = create_time;
 	}
+
+	private String method_name;
+	@IgnoreColumn
+	public String getMethod_name() {
+		return method_name;
+	}
+
+	public void setMethod_name(String method_name) {
+		this.method_name = method_name;
+	}
+
+	public String[] validateArr;
+	@IgnoreColumn
+	public String[] getValidateArr() {
+		return validateArr;
+	}
+
+	public void setValidateArr(String[] validateArr) {
+		this.validateArr = validateArr;
+	}
+
+
+	private String is_query_param;
+
+	private String query_operator;
+	@FiledName("is_query_param")
+	public String getIs_query_param() {
+		return is_query_param;
+	}
+
+	public void setIs_query_param(String is_query_param) {
+		this.is_query_param = is_query_param;
+	}
+	@FiledName("query_operator")
+	public String getQuery_operator() {
+		return query_operator;
+	}
+
+	public void setQuery_operator(String query_operator) {
+		this.query_operator = query_operator;
+	}
+
+	private String is_dic_query_param;
+	@IgnoreColumn
+	public String getIs_dic_query_param() {
+		return is_dic_query_param;
+	}
+
+	public void setIs_dic_query_param(String is_dic_query_param) {
+		this.is_dic_query_param = is_dic_query_param;
+	}
+
 }
